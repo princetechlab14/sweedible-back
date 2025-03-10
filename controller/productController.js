@@ -13,7 +13,9 @@ const productSchema = Joi.object({
     size: Joi.array().items(Joi.number().required()).optional(),
     price: Joi.array().items(Joi.number().precision(2).min(0).required()).optional(),
     availability: Joi.string().valid("in_stock", "out_stock").default("in_stock"),
-    most_selling: Joi.alternatives().try(Joi.boolean(), Joi.string().valid("true", "false")).default("false")
+    most_selling: Joi.alternatives().try(Joi.boolean(), Joi.string().valid("true", "false")).default("false"),
+    exclusive: Joi.alternatives().try(Joi.boolean(), Joi.string().valid("true", "false")).default("false"),
+    featured: Joi.alternatives().try(Joi.boolean(), Joi.string().valid("true", "false")).default("false")
 });
 
 // Get list of products
@@ -282,7 +284,7 @@ const getData = async (req, res) => {
         let orderBy = [["id", "DESC"]];
         if (column && order) orderBy = [[column, order.toUpperCase()]];
         const { count, rows: tableRecords } = await ProductModel.findAndCountAll({
-            attributes: ['id', 'offer_plan_id', 'title', 'type', 'slug', 'images', 'short_desc', 'description', 'availability', 'most_selling', 'shorting', 'status'],
+            attributes: ['id', 'offer_plan_id', 'title', 'type', 'slug', 'images', 'short_desc', 'description', 'availability', 'most_selling', 'shorting', 'status', 'exclusive', 'featured'],
             where: whereCondition,
             limit,
             offset,

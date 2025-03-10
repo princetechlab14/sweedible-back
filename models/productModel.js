@@ -44,6 +44,14 @@ module.exports = (sequelize, Sequelize, DataTypes) => {
                 type: DataTypes.BOOLEAN,
                 defaultValue: true,
             },
+            exclusive: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: false,
+            },
+            featured: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: false,
+            },
             shorting: {
                 type: DataTypes.INTEGER,
                 defaultValue: 500,

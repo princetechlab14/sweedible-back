@@ -21,11 +21,8 @@ const server = http.createServer(app);
 
 const allowedOrigins = [
   'https://medicine_back.millionairclubs.in',
-  'http://localhost:7005',
-  'http://localhost:7006',
+  'http://localhost:7007',
   'http://localhost:3000',
-  'https://capsule1.com',
-  'https://api.capsule1.com',
   'https://medicine-web-two.vercel.app',
 ];
 
@@ -84,11 +81,7 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: "http://localhost:7006/",
-        description: "Local server",
-      },
-      {
-        url: "http://localhost:7005/",
+        url: "http://localhost:7007/",
         description: "Local server",
       },
       {

@@ -181,6 +181,23 @@
                                     value="<%= products?.most_selling ?? true %>" class="w-5 h-5">
                             </div>
 
+                            <!-- exclusive field -->
+                            <div class="mb-4 flex items-center">
+                                <label for="exclusive" class="text-sm font-medium text-gray-700 mr-2">
+                                    <b>Exclusive:</b>
+                                </label>
+                                <input type="checkbox" name="exclusive" id="exclusive"
+                                    value="<%= products?.exclusive ?? true %>" class="w-5 h-5">
+                            </div>
+
+                            <!-- featured field -->
+                            <div class="mb-4 flex items-center">
+                                <label for="featured" class="text-sm font-medium text-gray-700 mr-2">
+                                    <b>Featured:</b>
+                                </label>
+                                <input type="checkbox" name="featured" id="featured"
+                                    value="<%= products?.featured ?? true %>" class="w-5 h-5">
+                            </div>
                             <button type="submit"
                                 class="inline-flex items-end px-4 py-2 bg-blue-500 border border-transparent rounded-md shadow-sm text-base font-medium text-white hover:bg-blue-600 float-right">
                                 Submit

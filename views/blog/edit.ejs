@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include("../partial/head", { title: "Edit Blog" }) %>
+        <script src="https://cdn.ckeditor.com/4.16.1/full/ckeditor.js"></script>
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <%- include("../partial/sidebar") %>
+
+        <!-- Main Content -->
+        <div class="ml-0 md:ml-64 flex flex-col min-h-screen">
+            <!-- Header -->
+            <%- include("../partial/header") %>
+
+                <!-- Main Content Area -->
+                <div class="container mx-auto py-8 mt-5">
+                    <div class="flex flex-col shadow-md mb-5 bg-white rounded-lg p-5">
+                        <h1 class="text-4xl font-extrabold mb-4 text-gray-900">
+                            Edit Blog
+                        </h1>
+
+                        <!-- Error Display -->
+                        <div class="block my-1">
+                            <% if(error.length> 0){ %>
+                                <p class="text-red-700 text-xl font-bold my-2">
+                                    <%= error %>
+                                </p>
+                                <% } %>
+                        </div>
+
+                        <form id="blogForm" action="/admin/blogs/<%= blog.id %>/update" method="POST"
+                            enctype="multipart/form-data">
+                            <!-- Title field -->
+                            <div class="mb-4">
+                                <label for="title" class="block text-sm font-medium text-gray-700">Title:</label>
+                                <input id="title" name="title" type="text" value="<%= blog.title %>"
+                                    class="mt-1 block border p-1 w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" />
+                            </div>
+
+                            <!-- Slug field -->
+                            <div class="mb-4">
+                                <label for="slug" class="block text-sm font-medium text-gray-700">Slug:</label>
+                                <input id="slug" type="text" value="<%= blog.slug %>"
+                                    class="mt-1 block border p-1 w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                                    readonly />
+                            </div>
+
+                            <!-- Images field -->
+                            <div class="mb-4">
+                                <label for="images" class="block text-sm font-medium text-gray-700">Images:</label>
+                                <input id="images" name="images" type="file"
+                                    class="mt-1 block border p-1 w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                                    multiple accept="image/*" />
+                                <div class="grid grid-cols-6 gap-4 my-2">
+                                    <% blog?.images?.forEach((image, index)=> { %>
+                                        <img src="<%= image %>" alt="image" class="mx-2">
+                                        <% }); %>
+                                </div>
+                            </div>
+
+                            <!-- Short Description field -->
+                            <div class="mb-4">
+                                <label for="short_desc" class="block text-sm font-medium text-gray-700">Short
+                                    Description:</label>
+                                <input id="short_desc" name="short_desc" type="text" value="<%= blog.short_desc %>"
+                                    class="mt-1 block border p-1 w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" />
+                            </div>
+
+                            <!-- Description field (CKEditor) -->
+                            <div class="mb-4">
+                                <label for="description"
+                                    class="block text-sm font-medium text-gray-700">Description:</label>
+                                <textarea name="description" id="description"
+                                    class="mt-1 block border p-1 w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"><%= blog.description %></textarea>
+                            </div>
+
+                            <!-- Shorting field -->
+                            <div class="mb-4">
+                                <label for="shorting" class="block text-sm font-medium text-gray-700">Shorting:</label>
+                                <input id="shorting" name="shorting" type="number" value="<%= blog.shorting %>"
+                                    class="mt-1 block border p-1 w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" />
+                            </div>
+
+                            <button type="submit"
+                                class="inline-flex items-center px-4 py-2 bg-blue-500 border border-transparent rounded-md shadow-sm text-base font-medium text-white hover:bg-blue-600 mb-4">
+                                Update Blog
+                            </button>
+                        </form>
+
+                    </div>
+                </div>
+        </div>
+
+        <!-- Footer -->
+        <%- include("../partial/footer") %>
+
+            <script>
+                CKEDITOR.replace("description", {
+                    extraPlugins:
+                        "justify, link, colorbutton, font, colordialog, iframe,  forms, div, flash, pagebreak, smiley, preview, print, save, newpage",
+                    toolbar: [
+                        {
+                            name: "document",
+                            items: [
+                                "Source",
+                                "NewPage",
+                                "Preview",
+                                "Print",
+                                "Save",
+                                "Templates",
+                            ],
+                        },
+                        {
+                            name: "clipboard",
+                            items: [
+                                "Cut",
+                                "Copy",
+                                "Paste",
+                                "PasteText",
+                                "PasteFromWord",
+                                "Undo",
+                                "Redo",
+                            ],
+                        },
+                        {
+                            name: "editing",
+                            items: ["Find", "Replace", "SelectAll", "Scayt"],
+                        },
+                        {
+                            name: "forms",
+                            items: [
+                                "Form",
+                                "Checkbox",
+                                "Radio",
+                                "TextField",
+                                "Textarea",
+                                "Select",
+                                "Button",
+                                "ImageButton",
+                                "HiddenField",
+                            ],
+                        },
+                        {
+                            name: "basicstyles",
+                            items: [
+                                "Bold",
+                                "Italic",
+                                "Underline",
+                                "Strike",
+                                "Subscript",
+                                "Superscript",
+                                "RemoveFormat",
+                            ],
+                        },
+                        {
+                            name: "paragraph",
+                            items: [
+                                "NumberedList",
+                                "BulletedList",
+                                "Outdent",
+                                "Indent",
+                                "Blockquote",
+                                "CreateDiv",
+                                "JustifyLeft",
+                                "JustifyCenter",
+                                "JustifyRight",
+                                "JustifyBlock",
+                                "BidiLtr",
+                                "BidiRtl",
+                                "Language",
+                            ],
+                        },
+                        { name: "links", items: ["Link", "Unlink", "Anchor"] },
+                        {
+                            name: "insert",
+                            items: [
+                                "Image",
+                                "Table",
+                                "HorizontalRule",
+                                "Smiley",
+                                "SpecialChar",
+                                "PageBreak",
+                                "Iframe",
+                                "Flash",
+                            ],
+                        },
+                        {
+                            name: "styles",
+                            items: ["Styles", "Format", "Font", "FontSize"],
+                        },
+                        { name: "colors", items: ["TextColor", "BGColor"] },
+                        { name: "tools", items: ["Maximize", "ShowBlocks"] },
+                        { name: "others", items: ["-"] },
+                        { name: "about", items: ["About"] },
+                    ],
+                    removeDialogTabs: "image:advanced;link:advanced",
+                });
+            </script>
+</body>
+
+</html>

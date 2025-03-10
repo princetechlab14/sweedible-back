@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include("../partial/head", { title: "Carts List" }) %>
+</head>
+
+<body class="bg-gray-100 dark:bg-gray-900 font-sans bg-cover bg-center">
+    <!-- Sidebar -->
+    <%- include("../partial/sidebar") %>
+        <!-- Main Content -->
+        <div class="ml-0 md:ml-64 flex flex-col min-h-screen">
+            <!-- Header -->
+            <%- include("../partial/header") %>
+                <!-- Main Content Area -->
+                <div class="container mx-auto py-8 mt-5">
+                    <div class="flex flex-col shadow-md mb-5 bg-white rounded-lg p-3">
+                        <h1 class="text-4xl font-extrabold mb-4 text-gray-900 dark:text-white">
+                            Carts List
+                        </h1>
+                        <nav class="flex mb-4" aria-label="Breadcrumb">
+                            <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                                <li class="inline-flex items-center">
+                                    <a href="/admin"
+                                        class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">
+                                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path
+                                                d="M10 3.172L17.071 10.243 16.364 10.95 10 4.586 3.636 10.95 2.929 10.243 10 3.172z">
+                                            </path>
+                                        </svg>
+                                        Home
+                                    </a>
+                                </li>
+                                <li aria-current="page">
+                                    <div class="flex items-center">
+                                        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path
+                                                d="M10 3.172l7.071 7.071-1.414 1.414L10 4.586l-5.657 5.657-1.414-1.414L10 3.172z">
+                                            </path>
+                                        </svg>
+                                        <span
+                                            class="ml-1 text-sm font-medium text-gray-500 md:ml-2 dark:text-gray-400">Carts
+                                            List</span>
+                                    </div>
+                                </li>
+                            </ol>
+                        </nav>
+                    </div>
+                    <div class="container shadow-lg bg-white rounded-lg mx-auto px-4 sm:px-8">
+                        <div class="py-8">
+                            <div class="overflow-x-auto">
+                                <table id="listTable" class="min-w-full bg-white border border-gray-200 rounded-lg">
+                                    <thead style="background-color: #1f2937">
+                                        <tr>
+                                            <th
+                                                class="px-4 py-3 text-left text-xs font-medium text-gray-100 uppercase tracking-wider">
+                                                Actions
+                                            </th>
+                                            <th
+                                                class="px-4 py-3 text-left text-xs font-medium text-gray-100 uppercase tracking-wider">
+                                                ID
+                                            </th>
+                                            <th
+                                                class="px-4 py-3 text-left text-xs font-medium text-gray-100 uppercase tracking-wider">
+                                                User Id
+                                            </th>
+                                            <th
+                                                class="px-4 py-3 text-left text-xs font-medium text-gray-100 uppercase tracking-wider">
+                                                Ip
+                                            </th>
+                                            <th
+                                                class="px-4 py-3 text-left text-xs font-medium text-gray-100 uppercase tracking-wider">
+                                                Name
+                                            </th>
+                                            <th
+                                                class="px-4 py-3 text-left text-xs font-medium text-gray-100 uppercase tracking-wider">
+                                                Email
+                                            </th>
+                                            <th
+                                                class="px-4 py-3 text-left text-xs font-medium text-gray-100 uppercase tracking-wider">
+                                                Country
+                                            </th>
+                                            <th
+                                                class="px-4 py-3 text-left text-xs font-medium text-gray-100 uppercase tracking-wider">
+                                                Phone
+                                            </th>
+                                            <th
+                                                class="px-4 py-3 text-left text-xs font-medium text-gray-100 uppercase tracking-wider">
+                                                Created At
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+        <!-- Footer -->
+        <%- include("../partial/footer") %>
+
+            <!-- jQuery -->
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <!-- DataTables JS -->
+            <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+            <!-- SweetAlert2 JS -->
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
+            <script>
+                $(document).ready(function () {
+                    let table = $("#listTable").DataTable({
+                        processing: true,
+                        serverSide: true,
+                        ajax: function (data, callback, settings) {
+                            let page = Math.floor(settings._iDisplayStart / settings._iDisplayLength) + 1;
+                            let limit = settings._iDisplayLength;
+                            let search = data.search.value;
+
+                            let order = settings.aaSorting[0] ? settings.aaSorting[0][1] : "desc";
+                            let columnIndex = settings.aaSorting[0] ? settings.aaSorting[0][0] : 0;
+                            let columns = [null, "id", "user_id", "ip", "name", "email", "country", "phone", "created_at"];
+                            let column = columns[columnIndex] || "id";
+                            $.ajax({
+                                url: "/admin/carts/list",
+                                type: "GET",
+                                data: { page, limit, search, order, column },
+                                success: function (response) {
+                                    callback({
+                                        draw: settings.iDraw,
+                                        recordsTotal: response.pagination.totalItems,
+                                        recordsFiltered: response.pagination.totalItems,
+                                        data: response.data,
+                                    });
+                                },
+                                error: function () {
+                                    Swal.fire("Error", "Failed to load data.", "error");
+                                },
+                            });
+                        },
+                        columns: [
+                            {
+                                data: null,
+                                render: function (data, type, row) {
+                                    return ` <a href="/admin/carts/${row.id}/show" class="text-blue-500 hover:text-blue-700"><i class="fa fa-eye"></i></a> `;
+                                },
+                                orderable: false
+                            },
+                            { data: "id" },
+                            { data: "user_id" },
+                            { data: "ip" },
+                            { data: "name" },
+                            { data: "email" },
+                            { data: "country" },
+                            { data: "phone" },
+                            { data: "created_at" },
+                        ],
+                        order: [[1, "desc"]],
+                    });
+                });
+            </script>
+</body>
+
+</html>

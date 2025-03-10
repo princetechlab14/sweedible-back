@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include("./partial/head", { title: title }) %>
+
+    <body class="bg-gray-100 dark:bg-gray-900 font-sans">
+        <!-- Sidebar -->
+        <%- include("./partial/sidebar") %>
+
+            <!-- Main Content -->
+            <div class="ml-0 md:ml-64 flex flex-col min-h-screen">
+                <!-- Header -->
+                <%- include("./partial/header") %>
+
+                    <!-- Main Content Area -->
+                    <main class="flex-1 p-6 dark:bg-gray-800">
+                        <div class="container mx-auto">
+                            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200">
+                                Dashboard
+                            </h2>
+                        </div>
+                    </main>
+            </div>
+
+            <!-- Footer -->
+            <%- include("./partial/footer") %>
+    </body>
+
+</html>

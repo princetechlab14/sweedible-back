@@ -1,0 +1,189 @@
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <title>
+        <%= title %>
+    </title>
+    <link rel="shortcut icon" href="/favicon.webp" type="image/x-icon">
+
+    <!-- Tailwind CSS -->
+    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet" />
+    <!-- FontAwesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
+    <!-- DataTables CSS -->
+    <link href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css" rel="stylesheet" />
+
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Include jQuery Validation Plugin -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+
+    <!-- SweetAlert JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+    <style>
+        #employeeTable {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        #employeeTable thead th {
+            background-color: #1f2937;
+            color: #ffffff;
+            padding: 0.75rem;
+            text-align: left;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+        }
+
+        #employeeTable tbody td {
+            padding: 0.75rem;
+            font-size: 0.875rem;
+            color: #4a5568;
+        }
+
+        #employeeTable tbody tr:nth-child(even) {
+            background-color: #f7fafc;
+        }
+
+        #employeeTable tbody tr:hover {
+            background-color: #edf2f7;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            color: #4a5568 !important;
+            border: 1px solid #e2e8f0;
+            background-color: #fff;
+            padding: 0.5rem 0.75rem;
+            margin: 0 0.25rem;
+            border-radius: 0.375rem;
+            transition: all 0.3s ease;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+            background-color: #edf2f7;
+            border-color: #cbd5e0;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+            color: #fff !important;
+            background-color: #1f2937;
+            border-color: #1f2937;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
+            color: #a0aec0 !important;
+            background-color: #e2e8f0;
+            border-color: #e2e8f0;
+        }
+
+        .sidebar-link:hover {
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+
+        .sidebar-link.active {
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .close-sidebar {
+            display: none;
+            position: absolute;
+            top: 0;
+            right: 3px;
+            background-color: rgba(0, 0, 0, 0.2);
+            padding-left: 15px;
+            padding-right: 15px;
+            cursor: pointer;
+            border-radius: 15px;
+            margin-top: 5px;
+        }
+
+        .close-sidebar i {
+            color: white;
+        }
+
+        .popup {
+            display: none;
+            position: absolute;
+            right: -15px;
+            top: 4rem;
+            z-index: 1000;
+            width: 180px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        .popup-link {
+            display: block;
+            padding: 10px 20px;
+            color: #333333;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .popup-link:hover {
+            background-color: #f3f4f6;
+        }
+
+        .popup-link.logout {
+            color: #e53e3e;
+        }
+
+        .popup-link i {
+            margin-right: 8px;
+        }
+
+        .icon-button {
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .icon-button:hover {
+            color: #1d4ed8;
+        }
+    </style>
+
+    <script>
+        $(document).ready(function () {
+            // Toggle sidebar open/close
+            $("#sidebar-toggle").on("click", function () {
+                $("#sidebar").toggleClass("-translate-x-full");
+            });
+
+            // Toggle user popup
+            $("#user-popup-toggle").on("click", function (e) {
+                e.stopPropagation(); // Prevent closing sidebar
+                $("#user-popup").toggle();
+            });
+
+            // Close sidebar when clicking outside or on links
+            $(document).on("click", function (e) {
+                if (!$(e.target).closest("#sidebar, #user-popup-toggle").length) {
+                    $("#user-popup").hide();
+                }
+            });
+
+            // Close sidebar when a link is clicked
+            $("#sidebar a").on("click", function () {
+                $("#sidebar").toggleClass("-translate-x-full");
+            });
+
+            // Close sidebar when close button is clicked
+            $("#close-sidebar").on("click", function () {
+                $("#sidebar").toggleClass("-translate-x-full");
+            });
+        });
+    </script>
+</head>

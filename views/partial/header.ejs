@@ -1,0 +1,18 @@
+<header
+    class="bg-white shadow-md py-4 px-6 flex justify-between sticky top-0 items-center dark:bg-gray-800 dark:text-gray-200 relative">
+    <button class="text-gray-600 focus:outline-none md:hidden" id="sidebar-toggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    <div class="flex items-center space-x-4 justify-end w-full">
+        <div class="relative">
+            <button class="relative align-middle rounded-full focus:outline-none" id="user-popup-toggle">
+                <img class="object-cover w-8 h-8 rounded-full" src="https://i.pravatar.cc/150?img=2" alt="" />
+            </button>
+            <!-- Popup -->
+            <div class="popup" id="user-popup">
+                <a href="/admin/profile" class="popup-link"><i class="fas fa-user"></i>Profile</a>
+                <a href="/admin/logout" class="popup-link logout"><i class="fas fa-sign-out-alt"></i>Logout</a>
+            </div>
+        </div>
+    </div>
+</header>

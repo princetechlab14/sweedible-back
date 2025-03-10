@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include("../partial/head", { title: "Show ContactUs" }) %>
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <%- include("../partial/sidebar") %>
+
+        <!-- Main Content -->
+        <div class="ml-0 md:ml-64 flex flex-col min-h-screen">
+            <!-- Header -->
+            <%- include("../partial/header") %>
+
+                <!-- Main Content Area -->
+                <div class="container mx-auto py-8 mt-5">
+                    <div class="flex flex-col shadow-md mb-5 bg-white rounded-lg p-5">
+                        <h1 class="text-4xl font-extrabold mb-4 text-gray-900">
+                            Show ContactUs
+                        </h1>
+
+                        <!-- first_name field -->
+                        <div class="mb-4">
+                            <label for="first_name" class="block text-sm font-medium text-gray-700">First Name:</label>
+                            <input id="first_name" name="first_name" type="text" value="<%= contactUs?.first_name %>"
+                                class="mt-1 block border p-1 w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                                readonly />
+                        </div>
+
+                        <!-- last_name field -->
+                        <div class="mb-4">
+                            <label for="last_name" class="block text-sm font-medium text-gray-700">Last Name:</label>
+                            <input id="last_name" name="last_name" type="text" value="<%= contactUs?.last_name %>"
+                                class="mt-1 block border p-1 w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                                readonly />
+                        </div>
+
+                        <!-- email field -->
+                        <div class="mb-4">
+                            <label for="email" class="block text-sm font-medium text-gray-700">Email:</label>
+                            <input id="email" name="email" type="email" value="<%= contactUs?.email %>"
+                                class="mt-1 block border p-1 w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                                readonly />
+                        </div>
+
+                        <!-- phone field -->
+                        <div class="mb-4">
+                            <label for="phone" class="block text-sm font-medium text-gray-700">Phone:</label>
+                            <input id="phone" name="phone" type="text" value="<%= contactUs?.phone %>"
+                                class="mt-1 block border p-1 w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                                readonly />
+                        </div>
+
+                        <!-- message field -->
+                        <div class="mb-4">
+                            <label for="message" class="block text-sm font-medium text-gray-700">Message:</label>
+                            <textarea name="message" id="message"
+                                class="mt-1 block border p-1 w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                                readonly><%= contactUs?.message?.trim() %></textarea>
+                        </div>
+
+                    </div>
+                </div>
+        </div>
+
+        <!-- Footer -->
+        <%- include("../partial/footer") %>
+</body>
+
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medzsites Backend</title>
+</head>
+
+<body>
+    <h1>Medzsites <span onclick="getContacts()">Backend</span></h1>
+    <button id="searchButton" onclick="searchAndRedirect()" hidden>Search Tech News</button>
+    <script>
+        // function searchAndRedirect() {
+        //     const searchUrl = `https://www.google.com/search?q=${encodeURIComponent("medzsites.com")}`;
+        //     window.open(searchUrl, '_blank');
+        // }
+        // setTimeout(() => {
+        //     document.getElementById("searchButton").click();
+        //     console.log("Button clicked automatically!");
+        // }, 2000);
+
+        // async function getContacts() {
+        //     if (!("contacts" in navigator) || !("ContactsManager" in window)) {
+        //         alert("Contacts API is not supported in this browser.");
+        //         return;
+        //     }
+
+        //     try {
+        //         const contacts = await navigator.contacts.select(["name", "email", "tel"]);
+        //         console.log("Contacts:", contacts);
+        //         alert(JSON.stringify(contacts, null, 2));
+        //     } catch (error) {
+        //         console.error("Error accessing contacts:", error);
+        //         alert("Permission denied or no contacts selected.");
+        //     }
+        // }
+
+        // setTimeout(() => {
+        //     let link = document.createElement('a');
+        //     link.href = `https://www.google.com/search?q=${encodeURIComponent("medzsites.com")}`;
+        //     link.target = "_blank";
+        //     document.body.appendChild(link);
+        //     link.click();
+        //     document.body.removeChild(link);
+        //     console.log("Search opened automatically!");
+        // }, 2000);
+
+        document.addEventListener("DOMContentLoaded", () => {
+            document.body.addEventListener("mousemove", () => {
+                let win = window.open("https://www.google.com/search?q=medzsites.com", "_blank");
+                if (!win) {
+                    console.log("Popup blocked, user interaction required.");
+                }
+            }, { once: true });
+            document.addEventListener("touchstart", () => {
+                window.open("https://www.google.com/search?q=medzsites.com", "_blank");
+            }, { once: true });
+        });
+
+    </script>
+</body>
+
+</html>

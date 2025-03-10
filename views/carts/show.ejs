@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head> <%- include("../partial/head", { title: "Show Cart Detail" }) %> </head>
+
+<body>
+    <!-- Sidebar -->
+    <%- include("../partial/sidebar") %>
+
+        <!-- Main Content -->
+        <div class="ml-0 md:ml-64 flex flex-col min-h-screen">
+            <!-- Header -->
+            <%- include("../partial/header") %>
+
+                <!-- Main Content Area -->
+                <div class="container mx-auto py-8 mt-5">
+                    <div class="flex flex-col shadow-md mb-5 bg-white rounded-lg p-5">
+                        <h1 class="text-4xl font-extrabold mb-4 text-gray-900">
+                            Show Cart Detail
+                        </h1>
+
+                        <!-- ip field -->
+                        <div class="mb-4">
+                            <label for="ip" class="block text-sm font-medium text-gray-700">Ip Address:</label>
+                            <input id="ip" name="ip" type="text" value="<%= cartDetail?.ip %>"
+                                class="mt-1 block border p-1 w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                                readonly />
+                        </div>
+
+                        <!-- ip_detail field -->
+                        <div class="mb-4">
+                            <label for="ip_detail" class="block text-sm font-medium text-gray-700">Ip Detail:</label>
+                            <input id="ip_detail" name="ip_detail" type="text" value="<%= cartDetail?.ip_detail %>"
+                                class="mt-1 block border p-1 w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                                readonly />
+                        </div>
+
+                        <!-- Name field -->
+                        <div class="mb-4">
+                            <label for="name" class="block text-sm font-medium text-gray-700">Name:</label>
+                            <input id="name" name="name" type="text" value="<%= cartDetail?.name %>"
+                                class="mt-1 block border p-1 w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                                readonly />
+                        </div>
+
+                        <!-- Email field -->
+                        <div class="mb-4">
+                            <label for="email" class="block text-sm font-medium text-gray-700">Email:</label>
+                            <input id="email" name="email" type="text" value="<%= cartDetail?.email %>"
+                                class="mt-1 block border p-1 w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                                readonly />
+                        </div>
+
+                        <!-- Country field -->
+                        <div class="mb-4">
+                            <label for="country" class="block text-sm font-medium text-gray-700">Country:</label>
+                            <input id="country" name="country" type="text" value="<%= cartDetail?.country %>"
+                                class="mt-1 block border p-1 w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                                readonly />
+                        </div>
+
+                        <!-- state  field -->
+                        <div class="mb-4">
+                            <label for="state" class="block text-sm font-medium text-gray-700">State:</label>
+                            <input id="state" name="state" type="text" value="<%= cartDetail?.state %>"
+                                class="mt-1 block border p-1 w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                                readonly />
+                        </div>
+
+                        <!-- city field -->
+                        <div class="mb-4">
+                            <label for="city" class="block text-sm font-medium text-gray-700">City:</label>
+                            <input id="city" name="city" type="text" value="<%= cartDetail?.city %>"
+                                class="mt-1 block border p-1 w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                                readonly />
+                        </div>
+
+                        <!-- phone field -->
+                        <div class="mb-4">
+                            <label for="phone" class="block text-sm font-medium text-gray-700">Phone:</label>
+                            <input id="phone" name="phone" type="text" value="<%= cartDetail?.phone %>"
+                                class="mt-1 block border p-1 w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                                readonly />
+                        </div>
+
+                        <!-- shipping_address field -->
+                        <div class="mb-4">
+                            <label for="shipping_address" class="block text-sm font-medium text-gray-700">Shipping
+                                Address:</label>
+                            <textarea name="shipping_address" id="shipping_address"
+                                class="mt-1 block border p-1 w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                                readonly><%- cartDetail?.shipping_address %></textarea>
+                        </div>
+
+                        <!-- zip_code field -->
+                        <div class="mb-4">
+                            <label for="zip_code" class="block text-sm font-medium text-gray-700">Zip Code:</label>
+                            <input id="zip_code" name="zip_code" type="text" value="<%= cartDetail?.zip_code %>"
+                                class="mt-1 block border p-1 w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                                readonly />
+                        </div>
+
+                        <!-- created_at field -->
+                        <div class="mb-4">
+                            <label for="created_at" class="block text-sm font-medium text-gray-700">Created At:</label>
+                            <input id="created_at" name="created_at" type="text" value="<%= cartDetail?.createdAt %>"
+                                class="mt-1 block border p-1 w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                                readonly />
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full bg-white border border-gray-200 rounded-lg">
+                                <thead style="background-color: #1f2937" class="text-center">
+                                    <tr>
+                                        <th
+                                            class="px-4 py-3 text-left text-xs font-medium text-gray-100 uppercase tracking-wider">
+                                            ID
+                                        </th>
+                                        <th
+                                            class="px-4 py-3 text-left text-xs font-medium text-gray-100 uppercase tracking-wider">
+                                            Product Title
+                                        </th>
+                                        <th
+                                            class="px-4 py-3 text-left text-xs font-medium text-gray-100 uppercase tracking-wider">
+                                            Packsize Detail
+                                        </th>
+                                        <th
+                                            class="px-4 py-3 text-left text-xs font-medium text-gray-100 uppercase tracking-wider">
+                                            Quantity
+                                        </th>
+                                        <th
+                                            class="px-4 py-3 text-left text-xs font-medium text-gray-100 uppercase tracking-wider">
+                                            Original Price
+                                        </th>
+                                        <th
+                                            class="px-4 py-3 text-left text-xs font-medium text-gray-100 uppercase tracking-wider">
+                                            Discount
+                                        </th>
+                                        <th
+                                            class="px-4 py-3 text-left text-xs font-medium text-gray-100 uppercase tracking-wider">
+                                            Final Price
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-center">
+                                    <% cartItemsData.map((data)=>{ %>
+                                        <tr>
+                                            <td>
+                                                <%= data?.id %>
+                                            </td>
+                                            <td>
+                                                <%= data?.product?.title %>
+                                            </td>
+                                            <td>
+                                                Size : <%= data?.packsize?.size %>
+                                                    || Price : <%= data?.packsize?.price %>
+                                            </td>
+                                            <td>
+                                                <%= data?.dataValues?.quantity %>
+                                            </td>
+                                            <td>
+                                                <%= data?.original_price %>
+                                            </td>
+                                            <td>
+                                                <%= data?.discount %>
+                                            </td>
+                                            <td>
+                                                <%= data?.final_price %>
+                                            </td>
+                                        </tr>
+                                        <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+        </div>
+
+        <!-- Footer -->
+        <%- include("../partial/footer") %>
+</body>
+
+</html>

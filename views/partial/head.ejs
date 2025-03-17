@@ -186,4 +186,15 @@
             });
         });
     </script>
+
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+
+    <script>
+        window.OneSignalDeferred = window.OneSignalDeferred || [];
+        OneSignalDeferred.push(async function (OneSignal) {
+            await OneSignal.init({
+                appId: "f3760555-a9ad-42cb-9b3c-181bc96ce406",
+            });
+        });
+    </script>
 </head>

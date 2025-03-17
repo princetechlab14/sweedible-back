@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
         state: { type: DataTypes.STRING, allowNull: false },
         city: { type: DataTypes.STRING, allowNull: false },
         phone: { type: DataTypes.STRING, allowNull: false },
-        shipping_address: { type: DataTypes.TEXT, allowNull: false },
+        address: { type: DataTypes.TEXT, allowNull: false },
         zip_code: { type: DataTypes.STRING, allowNull: false },
         total_amount: { type: DataTypes.FLOAT, allowNull: false },
         status: {

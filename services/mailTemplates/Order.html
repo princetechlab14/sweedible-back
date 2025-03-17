@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation</title>
+</head>
+
+<body style="background-color: #f3f4f6; font-family: Arial, sans-serif; margin: 0; padding: 0;">
+    <div
+        style="max-width: 600px; margin: 40px auto; background-color: #ffffff; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); border-radius: 8px; padding: 20px;">
+        <div
+            style="background-color: #047857; color: white; font-size: 20px; font-weight: bold; padding: 15px; text-align: center; border-top-left-radius: 8px; border-top-right-radius: 8px;">
+            Thank you for your order
+        </div>
+        <div style="padding: 10px; color: #1f2937;">
+            <p>Hello <strong>{{name}}</strong>,</p>
+            <p style="margin-top: 15px;">
+                <strong>Important: </strong>
+                <span style="color: #dc2626;">
+                    Due to government payment policies, please avoid mentioning the keyword
+                    <strong>"medicine"</strong> when making your payment.
+                    If you receive a phone call from the payment gateway, kindly refrain from mentioning that the
+                    payment is
+                    related to purchasing medicine,
+                    as such payments are not allowed under the policy.
+                </span>
+            </p>
+
+            <h4 style="margin-top: 15px; font-weight: bold; margin-bottom: 5px;">Payment Link</h4>
+            <a href="{{payment_link}}" style="color: #2563eb; text-decoration: underline;">
+                {{payment_link}}
+            </a>
+
+            <p style="margin-top: 10px;">
+                Before proceeding with your payment, please take a moment to review our terms and conditions:
+            </p>
+
+            <p>
+                <strong>Payment Notes: </strong>
+                <span> Avoid mentioning anything related to your order or medicine in the payment notes as PayPal does
+                    not allow transactions related to medicine. If necessary, leave the payment notes blank. For any
+                    additional notes, please contact us directly at <a href="mailto:order@medzsites.com"
+                        style="color: #2563eb; text-decoration: underline;">order@medzsites.com</a>.</span>
+            </p>
+
+            <p>
+                <strong>Confirmation Email: </strong>
+                <span> After making your payment, expect a confirmation email from us within 24-48 hours.</span>
+            </p>
+
+            <p>
+                <strong>Payment Details: </strong> <span style="color: #dc2626;">If PayPal inquiries about the
+                    transaction, inform them that it is related to clothing, not medicine.</span>
+            </p>
+
+            <p>
+                <strong>Refund Policy: </strong>
+                <span> If you've already made a payment and mentioned any order or medicine details in the payment notes
+                    or
+                    order not recieved on your end then we'll refund the full amount, for refund request please contact
+                    us
+                    directly at <a href="mailto:order@medzsites.com"
+                        style="color: #2563eb; text-decoration: underline;">order@medzsites.com</a>.</span>
+            </p>
+
+            <p>
+                <strong>Delivery Time: </strong> <span>Estimated delivery time is around 2-3 weeks.</span>
+            </p>
+
+            <p>
+                <strong>Order Number: </strong> <span>During payment, please mention only your order number in the
+                    comments section; avoid mentioning any medicine names.</span>
+            </p>
+
+            <p>If you agree to these terms and conditions, please proceed with the payment using the link below.
+                Remember, we offer a 100% Satisfaction Guarantee. In case of any delay or non-delivery, we can either
+                reship your package or provide a full refund.</p>
+
+            <h4 style="margin-top: 15px; font-weight: bold; margin-bottom: 5px;">Payment Link</h4>
+            <a href="{{payment_link}}" style="color: #2563eb; text-decoration: underline;">
+                {{payment_link}}
+            </a>
+
+            <p style="margin-top: 10px;">
+                If you have any queries or need further assistance, please email us at <a
+                    href="mailto:order@medzsites.com"
+                    style="color: #2563eb; text-decoration: underline;">order@medzsites.com.</a>
+            </p>
+
+            <p>Thank you for choosing MedzSites.com. If you have any further questions, feel free to contact us.</p>
+            <!-- Order Summary -->
+            <h4 style="margin-top: 25px; font-weight: bold; color: #047857;">[Order #{{id}}] ({{order_date}})</h4>
+            <table style="width: 100%; border-collapse: collapse; border: 1px solid #d1d5db;">
+                <thead>
+                    <tr style="background-color: #e5e7eb;">
+                        <th style="border: 1px solid #d1d5db; padding: 8px; text-align: left;">Product</th>
+                        <th style="border: 1px solid #d1d5db; padding: 8px;">Quantity</th>
+                        <th style="border: 1px solid #d1d5db; padding: 8px;">Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each orderItems}}
+                    <tr>
+                        <td style="border: 1px solid #d1d5db; padding: 8px;">
+                            <b>{{this.title}}</b><br>
+                            <span style="color: #6b7280;">Size: {{this.size}}, Price : {{this.price}}</span>
+                        </td>
+                        <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center;">{{this.quantity}}</td>
+                        <td style="border: 1px solid #d1d5db; padding: 8px;">${{this.total_price}}</td>
+                    </tr>
+                    {{/each}}
+                    <tr>
+                        <td colspan="2"
+                            style="border: 1px solid #d1d5db; padding: 8px; text-align: right; font-weight: bold;">
+                            Subtotal:</td>
+                        <td style="border: 1px solid #d1d5db; padding: 8px;">${{this.sub_total}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"
+                            style="border: 1px solid #d1d5db; padding: 8px; text-align: right; font-weight: bold;">
+                            Shipping:</td>
+                        <td style="border: 1px solid #d1d5db; padding: 8px;">${{this.shipping_charge}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"
+                            style="border: 1px solid #d1d5db; padding: 8px; text-align: right; font-weight: bold;">
+                            PromoCode Discount:</td>
+                        <td style="border: 1px solid #d1d5db; padding: 8px;">${{this.promo_code_discount}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"
+                            style="border: 1px solid #d1d5db; padding: 8px; text-align: right; font-weight: bold;">
+                            Total:</td>
+                        <td style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold;">${{this.grand_total}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Billing & Shipping Addresses -->
+            <h3 style="margin-top: 25px; font-weight: bold;">Billing & Shipping Address</h3>
+            <table style="width: 100%; border-collapse: collapse; border: 1px solid #d1d5db;">
+                <thead>
+                    <tr style="background-color: #e5e7eb;">
+                        <th style="border: 1px solid #d1d5db; padding: 8px; text-align: left;">Billing address</th>
+                        <th style="border: 1px solid #d1d5db; padding: 8px;">Shipping address</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="padding: 8px; font-weight: bold;">
+                            <strong>Address:</strong>
+                            <address>
+                                {{this.address}},
+                                {{this.country}}, {{this.state}},
+                                {{this.city}}, {{this.zip_code}}
+                            </address>
+                        </td>
+                        <td style="padding: 8px; font-weight: bold;">
+                            <strong>Address:</strong>
+                            <address>
+                                {{this.s_address}},
+                                {{this.s_country}}, {{this.s_state}},
+                                {{this.s_city}}, {{this.s_zip_code}}
+                            </address>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px;">
+                            <strong>Phone:</strong> {{this.phone}}
+                        </td>
+                        <td style="padding: 8px;">
+                            <strong>Phone:</strong> {{this.s_phone}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px;">
+                            <strong>Email:</strong> <a href="mailto:{{this.email}}"
+                                style="color: #2563eb; text-decoration: underline;">{{this.email}}</a>
+                        </td>
+                        <td style="padding: 8px;">
+                            <strong>Email:</strong> <a href="mailto:{{this.email}}"
+                                style="color: #2563eb; text-decoration: underline;">{{this.s_email}}</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+
+            <p style="margin-top: 20px; text-align: center; color: #374151;">
+                Thanks for using <a href="https://medzsites.com"
+                    style="color: #2563eb; font-weight: bold;">medzsites.com</a>!
+            </p>
+        </div>
+    </div>
+</body>
+
+</html>

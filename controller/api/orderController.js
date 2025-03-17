@@ -1,6 +1,7 @@
 const Joi = require("joi");
-const { OrderModel, OrderItemsModel, ProductModel, PromoCodeModel, sequelize, PackSizeProductModel } = require("../../models");
+const { OrderModel, OrderItemsModel, ProductModel, PromoCodeModel, sequelize, PackSizeProductModel, OfferPlansModel } = require("../../models");
 const { Op } = require("sequelize");
+const orderService = require("../../services/orderService");
 
 const OrderSchema = Joi.object({
     name: Joi.string().required(),
@@ -9,8 +10,17 @@ const OrderSchema = Joi.object({
     state: Joi.string().required(),
     city: Joi.string().required(),
     phone: Joi.string().pattern(/^[0-9]+$/).min(8).max(15).required(),
-    shipping_address: Joi.string().required(),
+    address: Joi.string().required(),
     zip_code: Joi.string().required(),
+    diffrent_address: Joi.boolean().default(false),
+    s_name: Joi.string().when('diffrent_address', { is: true, then: Joi.required(), otherwise: Joi.optional().allow('') }),
+    s_email: Joi.string().email().when('diffrent_address', { is: true, then: Joi.required(), otherwise: Joi.optional().allow('') }),
+    s_country: Joi.string().when('diffrent_address', { is: true, then: Joi.required(), otherwise: Joi.optional().allow('') }),
+    s_state: Joi.string().when('diffrent_address', { is: true, then: Joi.required(), otherwise: Joi.optional().allow('') }),
+    s_city: Joi.string().when('diffrent_address', { is: true, then: Joi.required(), otherwise: Joi.optional().allow('') }),
+    s_phone: Joi.string().pattern(/^[0-9]+$/).min(8).max(15).when('diffrent_address', { is: true, then: Joi.required(), otherwise: Joi.optional().allow('') }),
+    s_address: Joi.string().when('diffrent_address', { is: true, then: Joi.required(), otherwise: Joi.optional().allow('') }),
+    s_zip_code: Joi.string().when('diffrent_address', { is: true, then: Joi.required(), otherwise: Joi.optional().allow('') }),
     total_amount: Joi.number().positive().required(),
     status: Joi.string().valid("Pending", "Processing", "Confirmed", "Delivered", "Cancelled").default("Pending"),
     payment_status: Joi.string().valid("Pending", "Paid", "Cancelled").default("Pending"),
@@ -47,7 +57,8 @@ exports.createOrder = async (req, res) => {
         const { error, value } = OrderSchema.validate(req.body, { abortEarly: false });
         if (error) return res.status(400).json({ status: false, message: "Validation error", errors: error.details.map(err => err.message) });
 
-        const { name, email, country, state, city, phone, shipping_address, zip_code, total_amount, status, payment_status, payment_detail, promocode, items } = value;
+        const { name, email, country, state, city, phone, address, zip_code, total_amount, status, payment_status, payment_detail, promocode, items, diffrent_address, s_name, s_email, s_country, s_state, s_city, s_phone, s_address, s_zip_code } = value;
+        // Fetch promo code details if applied
         let promoCodeDetail = null;
         if (promocode && promocode !== "") {
             promoCodeDetail = await PromoCodeModel.findOne({
@@ -55,43 +66,90 @@ exports.createOrder = async (req, res) => {
                 attributes: ["id", "code", "discount", "type"]
             });
         }
+        // Fetch valid pack sizes and prices
         const packsizeIds = items.map(item => item.packsize_id);
-        const existingPackSizes = await PackSizeProductModel.findAll({
+        const packSizeDetails = await PackSizeProductModel.findAll({
             where: { id: packsizeIds },
-            attributes: ["id"]
+            attributes: ["id", "product_id", "size", "price"]
         });
-        const existingPackSizeIds = existingPackSizes.map(p => p.id);
-        const invalidPackSizes = packsizeIds.filter(id => !existingPackSizeIds.includes(id));
+
+        const packSizeMap = new Map(packSizeDetails.map(p => [p.id, p]));
+
+        const invalidPackSizes = packsizeIds.filter(id => !packSizeMap.has(id));
         if (invalidPackSizes.length > 0) {
             await transaction.rollback();
-            return res.status(400).json({
-                status: false,
-                message: `Invalid packsize_id(s): ${JSON.stringify(invalidPackSizes)}`,
-            });
+            return res.status(400).json({ status: false, message: `Invalid packsize_id(s): ${JSON.stringify(invalidPackSizes)}` });
         }
+
+        // Fetch product details with offer plans
+        const productIds = items.map(item => item.product_id);
+        const productDetails = await ProductModel.findAll({
+            where: { id: productIds },
+            attributes: ["id", "offer_plan_id", "title"],
+            include: [{ model: OfferPlansModel, as: "offerplan", required: false, attributes: ["id", "discount", "type"] }]
+        });
+
+        const productMap = new Map(productDetails.map(p => [p.id, p]));
+
+        // Calculate total price based on pack size price and offer plans
+        let calculatedTotal = 0;
+        let orderItems = items.map(item => {
+            let packSize = packSizeMap.get(item.packsize_id);
+            let product = productMap.get(item.product_id);
+            if (!packSize || !product) throw new Error(`Invalid product or packsize for product_id ${item.product_id}`);
+
+            let finalPrice = packSize.price;
+            if (product?.offerplan) {
+                if (product.offerplan.type === "Percantage") {
+                    finalPrice -= (finalPrice * product.offerplan.discount) / 100;
+                } else if (product.offerplan.type === "Amount") {
+                    finalPrice -= product.offerplan.discount;
+                }
+            }
+            calculatedTotal += finalPrice * item.quantity;
+            return {
+                order_id: null,
+                product_id: item.product_id,
+                packsize_id: item.packsize_id,
+                quantity: item.quantity,
+                price: finalPrice
+            };
+        });
+
+        // Apply Promo Code Discount
+        let promoCodeDiscount = 0;
+        if (promoCodeDetail) {
+            if (promoCodeDetail.type === "Percantage") {
+                promoCodeDiscount = (calculatedTotal * promoCodeDetail.discount) / 100;
+            } else if (promoCodeDetail.type === "Amount") {
+                promoCodeDiscount = promoCodeDetail.discount;
+            }
+        }
+        let shipping_charge = (calculatedTotal > 300 ? 0.00 : 25.00);
+        let grandTotal = calculatedTotal - promoCodeDiscount + shipping_charge;
 
         // Create the order
         const newOrder = await OrderModel.create({
-            user_id, name, email, country, state, city, phone, shipping_address, zip_code,
-            total_amount, status, payment_status, payment_detail,
-            promocode_id: promoCodeDetail?.id || null
+            user_id, name, email, country, state, city, phone, address, zip_code,
+            total_amount: calculatedTotal, status, payment_status, payment_detail,
+            promocode_id: promoCodeDetail?.id || null, diffrent_address, s_name, s_email, s_country, s_state, s_city, s_phone, s_address, s_zip_code
         }, { transaction });
-
-        // Create order items
-        const orderItems = items.map(item => ({
-            order_id: newOrder.id,
-            product_id: item.product_id,
-            packsize_id: item.packsize_id,
-            quantity: item.quantity,
-            price: item.price,
-        }));
+        orderItems = orderItems.map(item => ({ ...item, order_id: newOrder.id }));
         await OrderItemsModel.bulkCreate(orderItems, { transaction });
+
+        let orderItemsDetail = items.map(item => {
+            let packSize = packSizeMap.get(item.packsize_id);
+            let product = productMap.get(item.product_id);
+            return { ...item, title: product.title, size: packSize.size, price: packSize.price, total_price: packSize.price * item.quantity };
+        });
+        const OrderDetailSendMail = { id: newOrder.id, name, email, country, state, city, phone, address, zip_code, promo_code_discount: promoCodeDiscount.toFixed(2), grand_total: grandTotal.toFixed(2), orderItems: orderItemsDetail, order_date: new Date().toDateString(), payment_link: '', sub_total: calculatedTotal.toFixed(2), shipping_charge, diffrent_address, s_name, s_email, s_country, s_state, s_city, s_phone, s_address, s_zip_code };
+        orderService.createOrder(OrderDetailSendMail);
         await transaction.commit();
-        res.status(201).json({ message: "Order created successfully", order: newOrder, items: orderItems });
-    } catch (error) {
-        await transaction.rollback();
-        console.error("createOrder =>", error);
-        res.status(500).json({ message: "Error creating order", error: error.message });
+        return res.status(201).json({ status: true, message: "Order created successfully", orderDetail: orderItems });
+    } catch (err) {
+        if (transaction.finished !== "commit") await transaction.rollback();
+        console.error("Order Creation Error:", err);
+        return res.status(500).json({ status: false, message: "Internal Server Error" });
     }
 };
 

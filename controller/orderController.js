@@ -24,7 +24,7 @@ const getData = async (req, res) => {
                 [Op.or]: [
                     { id: { [Op.like]: `%${search}%` } },
                     { status: { [Op.like]: `%${search}%` } },
-                    { shipping_address: { [Op.like]: `%${search}%` } },
+                    { address: { [Op.like]: `%${search}%` } },
                     { total_amount: { [Op.like]: `%${search}%` } },
                     { payment_status: { [Op.like]: `%${search}%` } },
                 ],
@@ -35,7 +35,7 @@ const getData = async (req, res) => {
         if (column && order) orderBy = [[column, order.toUpperCase()]];
 
         const { count, rows: tableRecords } = await OrderModel.findAndCountAll({
-            attributes: ['id', 'user_id', 'shipping_address', 'total_amount', 'status', 'payment_status'],
+            attributes: ['id', 'user_id', 'address', 'total_amount', 'status', 'payment_status'],
             where: whereCondition,
             include: [
                 {

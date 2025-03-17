@@ -303,7 +303,7 @@ router.get("/search", apiController.searchProducts);
 
 /**
  * @swagger
- * /api/register:
+ * /api/auth:
  *   post:
  *     summary: Register a new user
  *     description: Creates a new user with a hashed password.
@@ -676,7 +676,7 @@ router.get("/get-cart", cartController.getCart);
  *                 pattern: "^[0-9]+$"
  *                 example: "1234567890"
  *                 description: Phone number (digits only, optional).
- *               shipping_address:
+ *               address:
  *                 type: string
  *                 example: "123 Main Street"
  *                 description: Shipping address (optional).
@@ -938,7 +938,7 @@ router.delete("/clear-cart", cartController.clearCart);
  *               - state
  *               - city
  *               - phone
- *               - shipping_address
+ *               - address
  *               - zip_code
  *               - total_amount
  *               - items
@@ -963,7 +963,7 @@ router.delete("/clear-cart", cartController.clearCart);
  *                 type: string
  *                 pattern: "^[0-9]+$"
  *                 example: "1234567890"
- *               shipping_address:
+ *               address:
  *                 type: string
  *                 example: "123 Main St, Apt 4B"
  *               zip_code:

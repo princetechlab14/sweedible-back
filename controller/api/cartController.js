@@ -13,7 +13,7 @@ const addOrUpdateCartSchema = Joi.object({
     state: Joi.string().max(255).allow(null).optional(),
     city: Joi.string().max(255).allow(null).optional(),
     phone: Joi.string().pattern(/^[0-9]+$/).allow(null).optional(),
-    shipping_address: Joi.string().allow(null).optional(),
+    address: Joi.string().allow(null).optional(),
     zip_code: Joi.string().max(20).allow(null).optional(),
     cartItems: Joi.array().items(
         Joi.object({
@@ -139,8 +139,8 @@ const addOrUpdateCart = async (req, res) => {
         const { error, value } = addOrUpdateCartSchema.validate(req.body, { abortEarly: false });
         if (error) return res.status(400).json({ status: false, message: "Validation Error", errors: error.details.map(err => err.message) });
         const geo = geoip.lookup(ip);
-        const { user_id = null, name, email, country, state, city, phone, shipping_address, zip_code, cartItems = [] } = value;
-        const cartData = { name, email, country, state, city, phone, shipping_address, zip_code, user_id, ip, ip_detail: geo ? JSON.stringify(geo) : null };
+        const { user_id = null, name, email, country, state, city, phone, address, zip_code, cartItems = [] } = value;
+        const cartData = { name, email, country, state, city, phone, address, zip_code, user_id, ip, ip_detail: geo ? JSON.stringify(geo) : null };
 
         if (user_id) {
             let userDetail = await UserModel.findOne({ where: { id: user_id } });

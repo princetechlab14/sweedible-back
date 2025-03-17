@@ -12,7 +12,7 @@ module.exports = (sequelize, Sequelize, DataTypes) => {
             state: { type: DataTypes.STRING, allowNull: true },
             city: { type: DataTypes.STRING, allowNull: true },
             phone: { type: DataTypes.STRING, allowNull: true },
-            shipping_address: { type: DataTypes.TEXT, allowNull: true },
+            address: { type: DataTypes.TEXT, allowNull: true },
             zip_code: { type: DataTypes.STRING, allowNull: true },
             promocode_id: { type: DataTypes.INTEGER, allowNull: true },
             subtotal: { type: DataTypes.FLOAT, allowNull: true }

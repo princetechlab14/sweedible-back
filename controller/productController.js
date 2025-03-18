@@ -252,9 +252,9 @@ const deleteProductReviewRecord = async (req, res) => {
 
 const productOfferPlansUpdate = async (req, res) => {
     const { id } = req.params;
-    const { offer_plan_id } = req.body;
+    const { offer_plan_id = null } = req.body;
     try {
-        await ProductModel.update({ offer_plan_id }, { where: { id } });
+        await ProductModel.update({ offer_plan_id: offer_plan_id || null }, { where: { id } });
         res.send({ success: true });
     } catch (error) {
         console.error("Error updating product offerplans record:", error);

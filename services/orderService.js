@@ -17,7 +17,7 @@ class OrderService extends EventEmitter {
 
     async createOrder(orderData) {
         // console.log('📦 New order received, emitting event...');
-        const PaymentLinkDetail = await paymentLinkCreate(orderData.grand_total);
+        const PaymentLinkDetail = await paymentLinkCreate({ totalAmount: orderData.grand_total });
         await OrderModel.update({ payment_detail: PaymentLinkDetail }, { where: { id: orderData.id } });
         orderData.payment_link = PaymentLinkDetail.status ? PaymentLinkDetail.data.link : '';
         await sendEmails(orderData);

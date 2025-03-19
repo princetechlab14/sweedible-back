@@ -387,13 +387,97 @@ const home = async (req, res) => {
             limit: 4,
         });
 
+        const exclusiveProducts = await ProductModel.findAll({
+            attributes: [
+                "id", "title", "slug", "type", "images", "availability", "short_desc", "created_at", "most_selling", "exclusive", "featured",
+                [Sequelize.literal(`(
+                    SELECT COALESCE(AVG(rating), 0) 
+                    FROM product_reviews 
+                    WHERE product_reviews.product_id = products.id
+                )`), "averageRating"],
+                [Sequelize.literal(`(
+                    SELECT COALESCE(MIN(price), 0) 
+                    FROM packsizes_products 
+                    WHERE packsizes_products.product_id = products.id
+                )`), "first_packsize_price"],
+                [Sequelize.literal(`(
+                    SELECT COALESCE(MAX(price), 0) 
+                    FROM packsizes_products 
+                    WHERE packsizes_products.product_id = products.id
+                )`), "last_packsize_price"]
+
+            ],
+            where: { status: "Active", exclusive: true },
+            include: [
+                {
+                    model: ProductReviewModel,
+                    as: "productReviews",
+                    attributes: ['product_id', 'id', 'email', 'rating', 'note'],
+                    required: false,
+                },
+                {
+                    model: OfferPlansModel,
+                    as: "offerplan",
+                    required: false,
+                    attributes: ["id", "discount", "type"],
+                    where: { status: "Active" },
+                    order: [["shorting", "ASC"]]
+                }
+            ],
+            order: [["created_at", "DESC"]],
+            subQuery: false,
+        });
+
+        const featuredProducts = await ProductModel.findAll({
+            attributes: [
+                "id", "title", "slug", "type", "images", "availability", "short_desc", "created_at", "most_selling", "exclusive", "featured",
+                [Sequelize.literal(`(
+                    SELECT COALESCE(AVG(rating), 0) 
+                    FROM product_reviews 
+                    WHERE product_reviews.product_id = products.id
+                )`), "averageRating"],
+                [Sequelize.literal(`(
+                    SELECT COALESCE(MIN(price), 0) 
+                    FROM packsizes_products 
+                    WHERE packsizes_products.product_id = products.id
+                )`), "first_packsize_price"],
+                [Sequelize.literal(`(
+                    SELECT COALESCE(MAX(price), 0) 
+                    FROM packsizes_products 
+                    WHERE packsizes_products.product_id = products.id
+                )`), "last_packsize_price"]
+
+            ],
+            where: { status: "Active", featured: true },
+            include: [
+                {
+                    model: ProductReviewModel,
+                    as: "productReviews",
+                    attributes: ['product_id', 'id', 'email', 'rating', 'note'],
+                    required: false,
+                },
+                {
+                    model: OfferPlansModel,
+                    as: "offerplan",
+                    required: false,
+                    attributes: ["id", "discount", "type"],
+                    where: { status: "Active" },
+                    order: [["shorting", "ASC"]]
+                }
+            ],
+            order: [["created_at", "DESC"]],
+            subQuery: false,
+        });
+
         return res.json({
             status: true,
             data: {
                 categories,
                 products,
                 mostSellingProducts,
-                blogs
+                blogs,
+                exclusiveProducts,
+                featuredProducts
             },
             message: "Home data fetched successfully."
         });

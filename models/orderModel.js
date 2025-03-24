@@ -6,10 +6,9 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             primaryKey: true
         },
-        user_id: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-        },
+        user_id: { type: DataTypes.INTEGER, allowNull: true },
+        ip: { type: DataTypes.STRING, allowNull: true },
+        ip_detail: { type: DataTypes.TEXT, allowNull: true },
         name: { type: DataTypes.STRING, allowNull: false },
         email: { type: DataTypes.STRING, allowNull: false },
         country: { type: DataTypes.STRING, allowNull: false },

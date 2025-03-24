@@ -37,7 +37,8 @@ const sendEmails = async (orderDetails) => {
         let mailOptions = {
             from: `"Medicoease" <${MAIL_USERNAME}>`,
             to: orderDetails.email,
-            subject: "Fwd: Payment Processing Update for Your Order",
+            cc: "kishankevadiya01@gmail.com",  // Added CC recipient
+            subject: "Payment Processing Update for Your Order",
             html: emailHTML,
         };
         let info = await transporter.sendMail(mailOptions);

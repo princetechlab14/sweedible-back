@@ -2,8 +2,10 @@ const Joi = require("joi");
 const { OrderModel, OrderItemsModel, ProductModel, PromoCodeModel, sequelize, PackSizeProductModel, OfferPlansModel } = require("../../models");
 const { Op } = require("sequelize");
 const orderService = require("../../services/orderService");
+const geoip = require("geoip-lite");
 
 const OrderSchema = Joi.object({
+    user_id: Joi.number().integer().allow(null).optional(),
     name: Joi.string().required(),
     email: Joi.string().email().required(),
     country: Joi.string().required(),
@@ -52,12 +54,12 @@ const OrderSchema = Joi.object({
 exports.createOrder = async (req, res) => {
     const transaction = await sequelize.transaction();
     try {
-        const user_id = req?.user?.id;
+        const ip = req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
         const currentDate = new Date();
         const { error, value } = OrderSchema.validate(req.body, { abortEarly: false });
         if (error) return res.status(400).json({ status: false, message: "Validation error", errors: error.details.map(err => err.message) });
 
-        const { name, email, country, state, city, phone, address, zip_code, total_amount, status, payment_status, payment_detail, promocode, items, diffrent_address, s_name, s_email, s_country, s_state, s_city, s_phone, s_address, s_zip_code } = value;
+        const { user_id = null, name, email, country, state, city, phone, address, zip_code, total_amount, status, payment_status, payment_detail, promocode, items, diffrent_address, s_name, s_email, s_country, s_state, s_city, s_phone, s_address, s_zip_code } = value;
         // Fetch promo code details if applied
         let promoCodeDetail = null;
         if (promocode && promocode !== "") {
@@ -129,10 +131,11 @@ exports.createOrder = async (req, res) => {
         let grandTotal = calculatedTotal - promoCodeDiscount + shipping_charge;
 
         // Create the order
+        const geo = geoip.lookup(ip);
         const newOrder = await OrderModel.create({
             user_id, name, email, country, state, city, phone, address, zip_code,
             total_amount: calculatedTotal, status, payment_status, payment_detail,
-            promocode_id: promoCodeDetail?.id || null, diffrent_address, s_name, s_email, s_country, s_state, s_city, s_phone, s_address, s_zip_code
+            promocode_id: promoCodeDetail?.id || null, diffrent_address, s_name, s_email, s_country, s_state, s_city, s_phone, s_address, s_zip_code, ip, ip_detail: geo ? JSON.stringify(geo) : null
         }, { transaction });
         orderItems = orderItems.map(item => ({ ...item, order_id: newOrder.id }));
         await OrderItemsModel.bulkCreate(orderItems, { transaction });
@@ -156,7 +159,8 @@ exports.createOrder = async (req, res) => {
 // 📜 Get all orders
 exports.getOrders = async (req, res) => {
     try {
-        const user_id = req.user?.id;
+        const { user_id = null } = req.query;
+        const ip = req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
         const orders = await OrderModel.findAll({
             attributes: { exclude: ["deleted_at"] },
             include: [
@@ -172,7 +176,7 @@ exports.getOrders = async (req, res) => {
                 },
                 { model: PromoCodeModel, as: "orderPromoCode", required: false, attributes: ["code", "discount", "type"] }
             ],
-            where: { user_id },
+            where: { [Op.or]: [user_id ? { user_id } : {}, ip ? { ip } : {}] },
         });
         res.json({ status: true, data: orders, message: "Get all orders successFully." });
     } catch (error) {
@@ -185,7 +189,8 @@ exports.getOrders = async (req, res) => {
 exports.getOrderById = async (req, res) => {
     try {
         const { id } = req.params;
-        const user_id = req.user?.id;
+        const { user_id = null } = req.query;
+        const ip = req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
         const orderDetail = await OrderModel.findOne({
             attributes: { exclude: ["deleted_at"] },
             include: [
@@ -201,7 +206,7 @@ exports.getOrderById = async (req, res) => {
                 },
                 { model: PromoCodeModel, as: "orderPromoCode", required: false, attributes: ["code", "discount", "type"] }
             ],
-            where: { user_id, id },
+            where: { id, [Op.or]: [user_id ? { user_id } : {}, ip ? { ip } : {}] },
         });
         if (!orderDetail) return res.status(404).json({ status: false, message: "Order not found" });
         res.json({ status: true, data: orderDetail, message: "Order retrieved successfully." });
@@ -229,10 +234,11 @@ exports.updateOrderStatus = async (req, res) => {
         if (error) return res.status(400).json({ status: false, message: error.details.map((err) => err.message).join(", ") });
 
         const { id } = req.params;
-        const user_id = req.user?.id;
+        const { user_id = null } = req.query;
+        const ip = req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
         const { status, payment_detail, payment_status } = value;
 
-        const order = await OrderModel.findOne({ where: { id, user_id } });
+        const order = await OrderModel.findOne({ where: { id, [Op.or]: [user_id ? { user_id } : {}, ip ? { ip } : {}] } });
         if (!order) return res.status(404).json({ status: false, message: "Order not found" });
 
         if (status === "Cancelled") order.status = status;

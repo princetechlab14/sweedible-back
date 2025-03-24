@@ -1036,7 +1036,7 @@ router.delete("/clear-cart", cartController.clearCart);
  *       500:
  *         description: Internal server error
  */
-router.post("/create-order", authenticateToken, orderController.createOrder);
+router.post("/create-order", orderController.createOrder);
 
 /**
  * @swagger
@@ -1114,7 +1114,7 @@ router.post("/create-order", authenticateToken, orderController.createOrder);
  *       500:
  *         description: Server error while fetching orders
  */
-router.get("/get-orders", authenticateToken, orderController.getOrders);
+router.get("/get-orders", orderController.getOrders);
 
 /**
  * @swagger
@@ -1215,7 +1215,7 @@ router.get("/get-orders", authenticateToken, orderController.getOrders);
  *       500:
  *         description: Server error while fetching order details
  */
-router.get("/get-order-details/:id", authenticateToken, orderController.getOrderById);
+router.get("/get-order-details/:id", orderController.getOrderById);
 
 /**
  * @swagger
@@ -1311,7 +1311,7 @@ router.get("/get-order-details/:id", authenticateToken, orderController.getOrder
  *                   type: string
  *                   example: "Internal server error"
  */
-router.put("/update-order-status/:id/status", authenticateToken, orderController.updateOrderStatus);
+router.put("/update-order-status/:id/status", orderController.updateOrderStatus);
 
 /**
  * @swagger

@@ -52,8 +52,7 @@ const store = async (req, res) => {
             return res.render("products/create", { title: "Products Create", error: error.details[0].message, subCategories, products: value });
         }
         const { title, sub_category_id, size, price } = value;
-        const slug = title.toLowerCase().replace(/\s+/g, "-").replace(/[^\w\-]+/g, "");
-        const storeData = { ...value, slug, images: imagePaths };
+        const slug = title.trim().toLowerCase().replace(/\s+/g, "-").replace(/\./g, "-").replace(/[^\w-]+/g, "");        const storeData = { ...value, slug, images: imagePaths };
         const newProduct = await ProductModel.create(storeData, { transaction });
         const productId = newProduct.id;
         if (size && price && size.length === price.length) {
@@ -128,8 +127,7 @@ const update = async (req, res) => {
         if (req.files.length && existingImages.length) {
             existingImages.forEach(image => deleteObjS3(image));
         }
-        const slug = value.title.toLowerCase().replace(/\s+/g, "-").replace(/[^\w\-]+/g, "");
-
+        const slug = value.title.trim().toLowerCase().replace(/\s+/g, "-").replace(/\./g, "-").replace(/[^\w-]+/g, "");
         await ProductModel.update(
             { ...value, slug, images: allImages },
             { where: { id: productId }, transaction }

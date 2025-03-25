@@ -42,6 +42,7 @@ db.OrderItemsModel = require('./orderItemsModel')(sequelize, Sequelize, DataType
 db.ContactUsModel = require('./contactModel')(sequelize, Sequelize, DataTypes);
 db.OfferModel = require('./offerModel')(sequelize, Sequelize, DataTypes);
 db.CartItemModel = require('./cartItemModel')(sequelize, Sequelize, DataTypes);
+db.DoctorsModel = require('./doctorsModel')(sequelize, Sequelize, DataTypes);
 
 // Define Relationships
 // 1. Category and SubCategory (One-to-Many)

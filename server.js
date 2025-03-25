@@ -24,6 +24,8 @@ const allowedOrigins = [
   'http://localhost:7007',
   'http://localhost:3000',
   'https://medicine-web2.vercel.app',
+  'https://sweedible.com',
+  'https://api.sweedible.com',
 ];
 
 const corsOptions = {
@@ -87,10 +89,6 @@ const swaggerOptions = {
       {
         url: "http://localhost:7007/",
         description: "Local server",
-      },
-      {
-        url: "https://medicine_back.millionairclubs.in/",
-        description: "Live server",
       },
     ],
     components: {

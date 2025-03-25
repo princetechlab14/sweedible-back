@@ -1,4 +1,4 @@
-const { CategoryModel, SubCategoryModel, BlogModel, ProductModel, SubCategoryProductModel, PackSizeProductModel, OfferPlansModel, ProductReviewModel, SettingModel } = require("../../models");
+const { CategoryModel, SubCategoryModel, BlogModel, ProductModel, SubCategoryProductModel, PackSizeProductModel, OfferPlansModel, ProductReviewModel, SettingModel, DoctorsModel } = require("../../models");
 const { Op, fn, col, literal, Sequelize } = require("sequelize");
 const Joi = require("joi");
 
@@ -514,4 +514,34 @@ const settingAll = async (req, res) => {
     }
 };
 
-module.exports = { categoryAll, blogAll, blogSingle, productAll, productSingle, searchProducts, home, productReview, settingAll };
+const doctorList = async (req, res) => {
+    try {
+        const doctors = await DoctorsModel.findAll({
+            attributes: ["id", "name", "degree", "image", "live_status"],
+            where: { status: "Active" },
+            order: [["shorting", "ASC"], ["created_at", "DESC"]]
+        });
+        return res.json({ status: true, data: doctors, message: "Get doctors list successFully." });
+    } catch (error) {
+        console.error("Error fetching doctors list:", error);
+        return res.status(500).json({ status: false, message: "Error fetching doctors list data." });
+    }
+};
+
+const doctorSingle = async (req, res) => {
+    const { id } = req.params;
+    if (isNaN(id)) return res.status(400).json({ status: false, message: "Invalid doctor ID format." });
+
+    try {
+        const doctors = await DoctorsModel.findOne({
+            attributes: ["id", "name", "degree", "image", "live_status", "description"],
+            where: { status: "Active", id }
+        });
+        if (!doctors) return res.status(404).json({ status: false, message: "Doctors not found." });
+        return res.json({ status: true, data: doctors, message: "Doctors fetched successFully." });
+    } catch (error) {
+        console.error("Error fetching doctors list:", error);
+        return res.status(500).json({ status: false, message: "Error fetching doctors list data." });
+    }
+};
+module.exports = { categoryAll, blogAll, blogSingle, productAll, productSingle, searchProducts, home, productReview, settingAll, doctorList, doctorSingle };

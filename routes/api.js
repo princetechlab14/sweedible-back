@@ -1638,4 +1638,107 @@ router.post("/contact-us", contactUsController.AddContactUs);
  */
 router.post("/add-email-for-offer", offerController.AddEmailForOffer);
 
+/**
+ * @swagger
+ * /api/get-doctors:
+ *   get:
+ *     summary: Retrieve a list of active doctors
+ *     description: Fetch all active doctors sorted by priority and creation date.
+ *     tags: [Doctors]
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved the list of doctors.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                         example: 1
+ *                       name:
+ *                         type: string
+ *                         example: "Dr. John Doe"
+ *                       degree:
+ *                         type: string
+ *                         example: "MD"
+ *                       image:
+ *                         type: string
+ *                         example: "https://example.com/image.jpg"
+ *                       live_status:
+ *                         type: string
+ *                         example: "Online"
+ *                 message:
+ *                   type: string
+ *                   example: "Doctors list fetched successfully."
+ *       500:
+ *         description: Internal Server Error.
+ */
+router.get("/get-doctors", apiController.doctorList);
+
+/**
+ * @swagger
+ * /api/get-doctors/{id}:
+ *   get:
+ *     summary: Get a single doctor's details
+ *     description: Retrieve details of a doctor by their unique ID.
+ *     tags: [Doctors]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: Numeric ID of the doctor to retrieve.
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved the doctor's details.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                       example: 1
+ *                     name:
+ *                       type: string
+ *                       example: "Dr. Jane Doe"
+ *                     degree:
+ *                       type: string
+ *                       example: "MBBS"
+ *                     image:
+ *                       type: string
+ *                       example: "https://example.com/doctor.jpg"
+ *                     live_status:
+ *                       type: string
+ *                       example: "Busy"
+ *                     description:
+ *                       type: string
+ *                       example: "A well-experienced cardiologist."
+ *                 message:
+ *                   type: string
+ *                   example: "Doctor details fetched successfully."
+ *       400:
+ *         description: Invalid doctor ID format.
+ *       404:
+ *         description: Doctor not found.
+ *       500:
+ *         description: Internal Server Error.
+ */
+router.get("/get-doctors/:id", apiController.doctorSingle);
 module.exports = router;

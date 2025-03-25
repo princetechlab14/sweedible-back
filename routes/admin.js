@@ -32,4 +32,5 @@ router.use("/users", authCheck, require("./web/users"));
 router.use("/carts", authCheck, require("./web/carts"));
 router.use("/offers", authCheck, require("./web/offers"));
 router.use("/contact-us", authCheck, require("./web/contactUs"));
+router.use("/doctors", authCheck, require("./web/doctors"));
 module.exports = router;

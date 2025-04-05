@@ -21,7 +21,7 @@ class OrderService extends EventEmitter {
         // await OrderModel.update({ payment_detail: PaymentLinkDetail }, { where: { id: orderData.id } });
         // orderData.payment_link = PaymentLinkDetail.status ? PaymentLinkDetail.data.link : '';
         const settingPaypalLink = await SettingModel.findOne({ where: { key: "paypal_link" } });
-        let paypalLink = settingPaypalLink?.val || process.env.PAYPAL_LINK;
+        let paypalLink = settingPaypalLink?.val.trim() || process.env.PAYPAL_LINK;
         orderData.payment_link = paypalLink != '' ? `${paypalLink}${orderData.grand_total}` : '';
         await sendEmails(orderData);
         this.emit('orderCreate', orderData);

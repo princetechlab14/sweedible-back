@@ -88,6 +88,7 @@
                                                     <a href="/admin/setting/<%= setting.id %>/edit"
                                                         class="text-blue-500 hover:text-blue-700 icon-button"
                                                         title="Edit"><i class="fa fa-edit"></i></a>
+                                                    <% if(false) { %>
                                                     <form action="/admin/setting/delete/<%= setting.id %>" method="POST"
                                                         class="inline delete-form">
                                                         <button type="submit"
@@ -96,6 +97,7 @@
                                                             <i class="fa fa-trash"></i>
                                                         </button>
                                                     </form>
+                                                    <% } %>
                                                 </td>
                                                 <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
                                                     <%= setting.id %>

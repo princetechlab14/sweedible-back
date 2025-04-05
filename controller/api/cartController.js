@@ -25,7 +25,7 @@ const addOrUpdateCartSchema = Joi.object({
 });
 
 const removeToCartSchema = Joi.object({
-    user_id: Joi.number().integer().optional(),
+    user_id: Joi.alternatives().try(Joi.number().integer(), Joi.valid(null)).optional(),
     product_id: Joi.number().integer().required(),
     packsize_id: Joi.number().integer().required(),
 });
@@ -187,11 +187,17 @@ const addOrUpdateCart = async (req, res) => {
 };
 
 const removeFromCart = async (req, res) => {
-    const transaction = await sequelize.transaction();
+    let transaction = null;
     try {
         const ip = req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
         const { error, value } = removeToCartSchema.validate(req.body, { abortEarly: false });
-        // if (error) return res.status(400).json({ status: false, message: "Validation Error", errors: error.details.map(err => err.message) });
+        if (error) {
+            return res.status(400).json({
+                status: false,
+                message: "Validation Error",
+                errors: error.details.map(err => err.message),
+            });
+        }
         const { user_id = null, product_id, packsize_id } = value;
         if (user_id) {
             let userDetail = await UserModel.findOne({ where: { id: user_id } });
@@ -202,13 +208,22 @@ const removeFromCart = async (req, res) => {
         const { id: cart_id } = cartDetail;
         const cartItem = await CartItemModel.findOne({ where: { cart_id, product_id, packsize_id } });
         if (!cartItem) return res.status(404).json({ status: false, message: "Cart item not found." });
+        transaction = await sequelize.transaction();
         await cartItem.destroy({ transaction });
         await transaction.commit();
         return res.json({ status: true, message: "Cart item removed successfully." });
     } catch (error) {
-        await transaction.rollback();
+        if (transaction) {
+            try {
+                await transaction.rollback();
+            } catch (rollbackError) {
+                console.error("Transaction rollback failed:", rollbackError);
+            }
+        }
         console.error("Error removing cart item:", error);
         return res.status(500).json({ status: false, message: "Error removing cart item." });
+    } finally {
+        if (transaction) { transaction = null; }
     }
 };
 

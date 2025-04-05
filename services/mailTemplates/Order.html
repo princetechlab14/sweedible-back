@@ -113,25 +113,25 @@
                     {{/each}}
                     <tr>
                         <td colspan="2"
-                            style="border: 1px solid #d1d5db; padding: 8px; text-align: right; font-weight: bold;">
+                            style="border: 1px solid #d1d5db; padding: 8px; text-align: left; font-weight: bold;">
                             Subtotal:</td>
                         <td style="border: 1px solid #d1d5db; padding: 8px;">${{this.sub_total}}</td>
                     </tr>
                     <tr>
                         <td colspan="2"
-                            style="border: 1px solid #d1d5db; padding: 8px; text-align: right; font-weight: bold;">
+                            style="border: 1px solid #d1d5db; padding: 8px; text-align: left; font-weight: bold;">
                             Shipping:</td>
                         <td style="border: 1px solid #d1d5db; padding: 8px;">${{this.shipping_charge}}</td>
                     </tr>
                     <tr>
                         <td colspan="2"
-                            style="border: 1px solid #d1d5db; padding: 8px; text-align: right; font-weight: bold;">
+                            style="border: 1px solid #d1d5db; padding: 8px; text-align: left; font-weight: bold;">
                             PromoCode Discount:</td>
                         <td style="border: 1px solid #d1d5db; padding: 8px;">${{this.promo_code_discount}}</td>
                     </tr>
                     <tr>
                         <td colspan="2"
-                            style="border: 1px solid #d1d5db; padding: 8px; text-align: right; font-weight: bold;">
+                            style="border: 1px solid #d1d5db; padding: 8px; text-align: left; font-weight: bold;">
                             Total:</td>
                         <td style="border: 1px solid #d1d5db; padding: 8px; font-weight: bold;">${{this.grand_total}}
                         </td>
@@ -160,11 +160,19 @@
                         </td>
                         <td style="padding: 8px; font-weight: bold;">
                             <strong>Address:</strong>
+                            {{#if this.s_address}}
                             <address>
                                 {{this.s_address}},
                                 {{this.s_country}}, {{this.s_state}},
                                 {{this.s_city}}, {{this.s_zip_code}}
                             </address>
+                            {{else}}
+                            <address>
+                                {{this.address}},
+                                {{this.country}}, {{this.state}},
+                                {{this.city}}, {{this.zip_code}}
+                            </address>
+                            {{/if}}
                         </td>
                     </tr>
                     <tr>
@@ -172,7 +180,7 @@
                             <strong>Phone:</strong> {{this.phone}}
                         </td>
                         <td style="padding: 8px;">
-                            <strong>Phone:</strong> {{this.s_phone}}
+                            <strong>Phone:</strong> {{#if this.s_phone}} {{this.s_phone}} {{else}} {{this.phone}} {{/if}}
                         </td>
                     </tr>
                     <tr>
@@ -182,7 +190,7 @@
                         </td>
                         <td style="padding: 8px;">
                             <strong>Email:</strong> <a href="mailto:{{this.email}}"
-                                style="color: #2563eb; text-decoration: underline;">{{this.s_email}}</a>
+                                style="color: #2563eb; text-decoration: underline;">{{#if this.s_email}} {{this.s_email}} {{else}} {{this.email}} {{/if}}</a>
                         </td>
                     </tr>
                 </tbody>

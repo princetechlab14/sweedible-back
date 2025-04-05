@@ -2,6 +2,7 @@ const nodemailer = require("nodemailer");
 const fs = require("fs");
 const path = require("path");
 const Handlebars = require('handlebars');
+const { SettingModel } = require("../models");
 
 const emailTemplateSource = fs.readFileSync(path.join(__dirname, "mailTemplates/Order.html"), "utf-8");
 const template = Handlebars.compile(emailTemplateSource);
@@ -33,11 +34,16 @@ const transporter = nodemailer.createTransport(
 
 const sendEmails = async (orderDetails) => {
     try {
+        const settingEmails = await SettingModel.findOne({ where: { key: "cc_email" } });
+        let emailList = [];
+        if (settingEmails && settingEmails.val) {
+            emailList = settingEmails.val.split(',').map(email => email.trim());
+        }
         const emailHTML = template(orderDetails);
         let mailOptions = {
             from: `"Medicoease" <${MAIL_USERNAME}>`,
             to: orderDetails.email,
-            cc: "kishankevadiya01@gmail.com",  // Added CC recipient
+            cc: emailList,
             subject: "Payment Processing Update for Your Order",
             html: emailHTML,
         };

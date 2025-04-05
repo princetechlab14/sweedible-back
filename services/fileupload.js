@@ -15,7 +15,7 @@ const s3Client = new S3Client({
         accessKeyId: accessKeyId,
         secretAccessKey: secretAccessKey,
     },
-    forcePathStyle: true
+    forcePathStyle: false
 });
 
 const deleteObjS3 = async (fileName) => {
@@ -49,6 +49,7 @@ const uploadToS3 = async (buffer, originalName) => {
         Key: sanitizedFileNameWithExtension,
         Body: buffer,
         ContentType: `image/${extension}`,
+        ACL: "public-read",
     };
     try {
         const data = await s3Client.send(new PutObjectCommand(params));

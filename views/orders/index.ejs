@@ -82,6 +82,10 @@
                                                 class="px-4 py-3 text-left text-xs font-medium text-gray-100 uppercase tracking-wider">
                                                 Status
                                             </th>
+                                            <th
+                                                class="px-4 py-3 text-left text-xs font-medium text-gray-100 uppercase tracking-wider">
+                                                Created At
+                                            </th>
                                         </tr>
                                     </thead>
                                 </table>
@@ -112,7 +116,7 @@
 
                             let order = settings.aaSorting[0] ? settings.aaSorting[0][1] : "desc";
                             let columnIndex = settings.aaSorting[0] ? settings.aaSorting[0][0] : 0;
-                            let columns = [null, "id", null, "total_amount", "shipping_address", "payment_status", "status"];
+                            let columns = [null, "id", null, "total_amount", "shipping_address", "payment_status", "status", "created_at"];
                             let column = columns[columnIndex] || "id";
                             $.ajax({
                                 url: "/admin/orders/list",
@@ -140,7 +144,14 @@
                                 orderable: false
                             },
                             { data: "id" },
-                            { data: "users.email", orderable: false, searchable: false },
+                            {
+                                data: "users",
+                                render: function (data, type, row) {
+                                    return data ? data.email : "";
+                                },
+                                orderable: false,
+                                searchable: false
+                            },
                             { data: "total_amount" },
                             { data: "shipping_address" },
                             { data: "payment_status" },
@@ -153,6 +164,21 @@
                                         return `<option value="${status}" ${selected}>${status}</option>`;
                                     }).join("");
                                     return `<select class="status-select border p-1 rounded-md" data-id="${row.id}">${options}</select>`;
+                                }
+                            },
+                            {
+                                data: "created_at",
+                                render: function (data, type, row) {
+                                    if (!data) return "";
+                                    return new Date(data).toLocaleString("en-US", {
+                                        year: "numeric",
+                                        month: "short",
+                                        day: "2-digit",
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                        second: "2-digit",
+                                        hour12: true
+                                    });
                                 }
                             }
                         ],

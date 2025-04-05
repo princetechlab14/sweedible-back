@@ -64,6 +64,7 @@ const synchronizeAndSeed = async () => {
     // await db.sequelize.sync();
     await require("./seeder/admin-seeder").admin();
     await require("./seeder/category-seeder").category();
+    await require("./seeder/setting-seeder").settings();
     // await require("./seeder/product-seeder").product();
   } catch (error) {
     console.error("Error during synchronization and seeding:", error);

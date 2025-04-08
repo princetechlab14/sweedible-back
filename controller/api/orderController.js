@@ -3,6 +3,7 @@ const { OrderModel, OrderItemsModel, ProductModel, PromoCodeModel, sequelize, Pa
 const { Op } = require("sequelize");
 const orderService = require("../../services/orderService");
 const geoip = require("geoip-lite");
+const { encrypt } = require("../../services/encryptResponse");
 
 const OrderSchema = Joi.object({
     user_id: Joi.number().integer().allow(null).optional(),
@@ -57,7 +58,7 @@ exports.createOrder = async (req, res) => {
         const ip = req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
         const currentDate = new Date();
         const { error, value } = OrderSchema.validate(req.body, { abortEarly: false });
-        if (error) return res.status(400).json({ status: false, message: "Validation error", errors: error.details.map(err => err.message) });
+        if (error) return res.status(400).json(encrypt({ status: false, message: "Validation error", errors: error.details.map(err => err.message) }));
 
         const { user_id = null, name, email, country, state, city, phone, address, zip_code, total_amount, status, payment_status, payment_detail, promocode, items, diffrent_address, s_name, s_email, s_country, s_state, s_city, s_phone, s_address, s_zip_code } = value;
         // Fetch promo code details if applied
@@ -80,7 +81,7 @@ exports.createOrder = async (req, res) => {
         const invalidPackSizes = packsizeIds.filter(id => !packSizeMap.has(id));
         if (invalidPackSizes.length > 0) {
             await transaction.rollback();
-            return res.status(400).json({ status: false, message: `Invalid packsize_id(s): ${JSON.stringify(invalidPackSizes)}` });
+            return res.status(400).json(encrypt({ status: false, message: `Invalid packsize_id(s): ${JSON.stringify(invalidPackSizes)}` }));
         }
 
         // Fetch product details with offer plans
@@ -148,11 +149,11 @@ exports.createOrder = async (req, res) => {
         const OrderDetailSendMail = { id: newOrder.id, name, email, country, state, city, phone, address, zip_code, promo_code_discount: promoCodeDiscount.toFixed(2), grand_total: grandTotal.toFixed(2), orderItems: orderItemsDetail, order_date: new Date().toDateString(), payment_link: '', sub_total: calculatedTotal.toFixed(2), shipping_charge, diffrent_address, s_name, s_email, s_country, s_state, s_city, s_phone, s_address, s_zip_code };
         orderService.createOrder(OrderDetailSendMail);
         await transaction.commit();
-        return res.status(201).json({ status: true, message: "Order created successfully", orderDetail: orderItems });
+        return res.status(201).json(encrypt({ status: true, message: "Order created successfully", orderDetail: orderItems }));
     } catch (err) {
         if (transaction.finished !== "commit") await transaction.rollback();
         console.error("Order Creation Error:", err);
-        return res.status(500).json({ status: false, message: "Internal Server Error" });
+        return res.status(500).json(encrypt({ status: false, message: "Internal Server Error" }));
     }
 };
 
@@ -177,11 +178,12 @@ exports.getOrders = async (req, res) => {
                 { model: PromoCodeModel, as: "orderPromoCode", required: false, attributes: ["code", "discount", "type"] }
             ],
             where: { [Op.or]: [user_id ? { user_id } : {}, ip ? { ip } : {}] },
+            order: [['created_at', 'DESC']]
         });
-        res.json({ status: true, data: orders, message: "Get all orders successFully." });
+        return res.json(encrypt({ status: true, data: orders, message: "Get all orders successFully." }));
     } catch (error) {
         console.error("getOrders =>", error);
-        res.status(500).json({ message: "Error fetching orders", error: error.message });
+        return res.status(500).json(encrypt({ message: "Error fetching orders", error: error.message }));
     }
 };
 
@@ -208,11 +210,11 @@ exports.getOrderById = async (req, res) => {
             ],
             where: { id, [Op.or]: [user_id ? { user_id } : {}, ip ? { ip } : {}] },
         });
-        if (!orderDetail) return res.status(404).json({ status: false, message: "Order not found" });
-        res.json({ status: true, data: orderDetail, message: "Order retrieved successfully." });
+        if (!orderDetail) return res.status(404).json(encrypt({ status: false, message: "Order not found" }));
+        return res.json(encrypt({ status: true, data: orderDetail, message: "Order retrieved successfully." }));
     } catch (error) {
         console.error("Error fetching order:", error);
-        res.status(500).json({ status: false, message: "Error fetching order", error: error.message });
+        return res.status(500).json(encrypt({ status: false, message: "Error fetching order", error: error.message }));
     }
 };
 
@@ -231,7 +233,7 @@ exports.updateOrderStatus = async (req, res) => {
                 }),
         });
         const { error, value } = schema.validate(req.body, { abortEarly: false });
-        if (error) return res.status(400).json({ status: false, message: error.details.map((err) => err.message).join(", ") });
+        if (error) return res.status(400).json(encrypt({ status: false, message: error.details.map((err) => err.message).join(", ") }));
 
         const { id } = req.params;
         const { user_id = null } = req.query;
@@ -239,14 +241,14 @@ exports.updateOrderStatus = async (req, res) => {
         const { status, payment_detail, payment_status } = value;
 
         const order = await OrderModel.findOne({ where: { id, [Op.or]: [user_id ? { user_id } : {}, ip ? { ip } : {}] } });
-        if (!order) return res.status(404).json({ status: false, message: "Order not found" });
+        if (!order) return res.status(404).json(encrypt({ status: false, message: "Order not found" }));
 
         if (status === "Cancelled") order.status = status;
         if (payment_detail !== undefined) order.payment_detail = payment_detail;
         if (payment_status !== undefined) order.payment_status = payment_status;
         await order.save();
-        res.json({ status: true, message: "Order status updated successfully" });
+        return res.json(encrypt({ status: true, message: "Order status updated successfully" }));
     } catch (error) {
-        res.status(500).json({ message: "Error updating order status", error: error.message });
+        return res.status(500).json(encrypt({ message: "Error updating order status", error: error.message }));
     }
 };

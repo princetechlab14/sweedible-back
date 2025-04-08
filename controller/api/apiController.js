@@ -1,6 +1,7 @@
 const { CategoryModel, SubCategoryModel, BlogModel, ProductModel, SubCategoryProductModel, PackSizeProductModel, OfferPlansModel, ProductReviewModel, SettingModel, DoctorsModel } = require("../../models");
-const { Op, fn, col, literal, Sequelize } = require("sequelize");
+const { Op, Sequelize } = require("sequelize");
 const Joi = require("joi");
+const { encrypt } = require("../../services/encryptResponse");
 
 const productReviewSchema = Joi.object({
     product_id: Joi.number().integer().required(),
@@ -17,9 +18,9 @@ const categoryAll = async (req, res) => {
             include: [{ model: SubCategoryModel, as: "subCategories", where: { status: "Active" }, attributes: ['id', 'name'], order: [["shorting", "ASC"]], required: false }],
             order: [["shorting", "ASC"]]
         });
-        return res.json({ status: true, data: categories, message: "Get all categories list successFully." });
+        return res.json(encrypt({ status: true, data: categories, message: "Get all categories list successFully." }));
     } catch (error) {
-        res.status(500).json({ status: false, message: "Error fetching categories." })
+        res.status(500).json(encrypt({ status: false, message: "Error fetching categories." }));
     }
 };
 
@@ -36,9 +37,9 @@ const blogAll = async (req, res) => {
             limit,
             offset
         });
-        return res.json({ status: true, data: blogs, currentPage: page, totalPages: Math.ceil(count / limit), totalRecord: count, message: "Get blogs list successFully." });
+        return res.json(encrypt({ status: true, data: blogs, currentPage: page, totalPages: Math.ceil(count / limit), totalRecord: count, message: "Get blogs list successFully." }));
     } catch (error) {
-        res.status(500).json({ status: false, message: "Error fetching blogAll." })
+        res.status(500).json(encrypt({ status: false, message: "Error fetching blogAll." }));
     }
 };
 
@@ -49,10 +50,10 @@ const blogSingle = async (req, res) => {
             attributes: ["id", "title", "slug", "images", "short_desc", "description"],
             where: { [Op.or]: [{ id: isNaN(identifier) ? null : identifier }, { slug: identifier }], status: "Active" }
         });
-        if (!blog) return res.status(404).json({ status: false, message: "Blog not found." });
-        return res.json({ status: true, data: blog, message: "Blog fetched successfully." });
+        if (!blog) return res.status(404).json(encrypt({ status: false, message: "Blog not found." }));
+        return res.json(encrypt({ status: true, data: blog, message: "Blog fetched successfully." }));
     } catch (error) {
-        res.status(500).json({ status: false, message: "Error fetching blogSingle." });
+        res.status(500).json(encrypt({ status: false, message: "Error fetching blogSingle." }));
     }
 };
 
@@ -88,7 +89,7 @@ const productAll = async (req, res) => {
                 });
 
                 if (!subcategory) {
-                    return res.status(404).json({ status: false, message: "Category or Subcategory not found." });
+                    return res.status(404).json(encrypt({ status: false, message: "Category or Subcategory not found." }));
                 }
 
                 includeCondition.push({
@@ -165,18 +166,18 @@ const productAll = async (req, res) => {
             offset
         });
 
-        return res.json({
+        return res.json(encrypt({
             status: true,
             data: products,
             totalProducts,
             totalPages: Math.ceil(totalProducts / limit),
             currentPage: page,
             message: "Products fetched successfully."
-        });
+        }));
 
     } catch (error) {
         console.error("Error fetching products:", error);
-        return res.status(500).json({ status: false, message: "Error fetching products." });
+        return res.status(500).json(encrypt({ status: false, message: "Error fetching products." }));
     }
 };
 
@@ -201,7 +202,7 @@ const productSingle = async (req, res) => {
                 { model: OfferPlansModel, as: "offerplan", attributes: ["id", "discount", "type"], required: false, where: { status: "Active" }, order: [["shorting", "ASC"]] }
             ]
         });
-        if (!products) return res.status(404).json({ status: false, message: "Product not found." });
+        if (!products) return res.status(404).json(encrypt({ status: false, message: "Product not found." }));
 
         const reviews = products.productReviews || [];
         const totalReviews = reviews.length;
@@ -209,16 +210,16 @@ const productSingle = async (req, res) => {
             ? (reviews.reduce((sum, review) => sum + review.rating, 0) / totalReviews).toFixed(2)
             : 0;
 
-        return res.json({
+        return res.json(encrypt({
             status: true, data: {
                 ...products.toJSON(),
                 averageRating: parseFloat(averageRating),
                 totalReviews
             }, message: "Product fetched successfully."
-        });
+        }));
     } catch (error) {
         console.error("productSingle=>", error)
-        res.status(500).json({ status: false, message: "Error fetching productSingle." });
+        res.status(500).json(encrypt({ status: false, message: "Error fetching productSingle." }));
     }
 };
 
@@ -226,7 +227,7 @@ const searchProducts = async (req, res) => {
     try {
         const { query } = req.query;
         if (!query) {
-            return res.status(400).json({ status: false, message: "Search query is required." });
+            return res.status(400).json(encrypt({ status: false, message: "Search query is required." }));
         }
 
         const products = await ProductModel.findAll({
@@ -269,14 +270,14 @@ const searchProducts = async (req, res) => {
         });
 
         if (!products.length) {
-            return res.status(404).json({ status: false, message: "No products found matching your search." });
+            return res.status(404).json(encrypt({ status: false, message: "No products found matching your search." }));
         }
 
-        return res.json({ status: true, data: products, message: "Search results fetched successfully." });
+        return res.json(encrypt({ status: true, data: products, message: "Search results fetched successfully." }));
 
     } catch (error) {
         console.error("Error searching products:", error);
-        return res.status(500).json({ status: false, message: "Error searching products." });
+        return res.status(500).json(encrypt({ status: false, message: "Error searching products." }));
     }
 };
 
@@ -469,7 +470,7 @@ const home = async (req, res) => {
             subQuery: false,
         });
 
-        return res.json({
+        return res.json(encrypt({
             status: true,
             data: {
                 categories,
@@ -480,11 +481,11 @@ const home = async (req, res) => {
                 featuredProducts
             },
             message: "Home data fetched successfully."
-        });
+        }));
 
     } catch (error) {
         console.error("Error fetching home data:", error);
-        return res.status(500).json({ status: false, message: "Error fetching home data." });
+        return res.status(500).json(encrypt({ status: false, message: "Error fetching home data." }));
     }
 };
 
@@ -492,13 +493,13 @@ const productReview = async (req, res) => {
     try {
         const { error, value } = productReviewSchema.validate(req.body);
         if (error) {
-            return res.status(400).json({ status: false, message: error });
+            return res.status(400).json(encrypt({ status: false, message: error }));
         }
         await ProductReviewModel.create({ ...value });
-        return res.json({ status: true, message: "Product review added successfully." });
+        return res.json(encrypt({ status: true, message: "Product review added successfully." }));
     } catch (error) {
         console.error("Error product reviews:", error);
-        return res.status(500).json({ status: false, message: "Error product reviews." });
+        return res.status(500).json(encrypt({ status: false, message: "Error product reviews." }));
     }
 };
 
@@ -507,10 +508,10 @@ const settingAll = async (req, res) => {
         const settings = await SettingModel.findAll({
             attributes: ["key", "val"],
         });
-        return res.json({ status: true, data: settings, message: "Get setting list successFully." });
+        return res.json(encrypt({ status: true, data: settings, message: "Get setting list successFully." }));
     } catch (error) {
         console.error("Error settingAll:", error);
-        return res.status(500).json({ status: false, message: "Error setting list get." });
+        return res.status(500).json(encrypt({ status: false, message: "Error setting list get." }));
     }
 };
 
@@ -521,27 +522,27 @@ const doctorList = async (req, res) => {
             where: { status: "Active" },
             order: [["shorting", "ASC"], ["created_at", "DESC"]]
         });
-        return res.json({ status: true, data: doctors, message: "Get doctors list successFully." });
+        return res.json(encrypt({ status: true, data: doctors, message: "Get doctors list successFully." }));
     } catch (error) {
         console.error("Error fetching doctors list:", error);
-        return res.status(500).json({ status: false, message: "Error fetching doctors list data." });
+        return res.status(500).json(encrypt({ status: false, message: "Error fetching doctors list data." }));
     }
 };
 
 const doctorSingle = async (req, res) => {
     const { id } = req.params;
-    if (isNaN(id)) return res.status(400).json({ status: false, message: "Invalid doctor ID format." });
+    if (isNaN(id)) return res.status(400).json(encrypt({ status: false, message: "Invalid doctor ID format." }));
 
     try {
         const doctors = await DoctorsModel.findOne({
             attributes: ["id", "name", "degree", "image", "live_status", "description"],
             where: { status: "Active", id }
         });
-        if (!doctors) return res.status(404).json({ status: false, message: "Doctors not found." });
-        return res.json({ status: true, data: doctors, message: "Doctors fetched successFully." });
+        if (!doctors) return res.status(404).json(encrypt({ status: false, message: "Doctors not found." }));
+        return res.json(encrypt({ status: true, data: doctors, message: "Doctors fetched successFully." }));
     } catch (error) {
         console.error("Error fetching doctors list:", error);
-        return res.status(500).json({ status: false, message: "Error fetching doctors list data." });
+        return res.status(500).json(encrypt({ status: false, message: "Error fetching doctors list data." }));
     }
 };
 module.exports = { categoryAll, blogAll, blogSingle, productAll, productSingle, searchProducts, home, productReview, settingAll, doctorList, doctorSingle };

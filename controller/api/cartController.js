@@ -1,8 +1,8 @@
-const jwt = require("jsonwebtoken");
 const { CartModel, ProductModel, PackSizeProductModel, OfferPlansModel, PromoCodeModel, sequelize, CartItemModel, UserModel } = require("../../models");
 const Joi = require("joi");
 const { Op } = require("sequelize");
 const geoip = require("geoip-lite");
+const { encrypt } = require("../../services/encryptResponse");
 
 // Cart Schema
 const addOrUpdateCartSchema = Joi.object({
@@ -36,7 +36,7 @@ const getCart = async (req, res) => {
         const ip = req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
         if (user_id) {
             let userDetail = await UserModel.findOne({ where: { id: user_id } });
-            if (!userDetail) return res.status(404).json({ status: false, message: "User not found." });
+            if (!userDetail) return res.status(404).json(encrypt({ status: false, message: "User not found." }));
         }
         let cartDetail = await CartModel.findOne({
             where: { [Op.or]: [user_id ? { user_id } : {}, ip ? { ip } : {}] },
@@ -117,7 +117,7 @@ const getCart = async (req, res) => {
             total -= promoCodeDiscount;
         }
 
-        return res.json({
+        return res.json(encrypt({
             status: true,
             data: formattedCart,
             subtotal: parseFloat(subtotal.toFixed(2)),
@@ -125,10 +125,10 @@ const getCart = async (req, res) => {
             promocode_discount: promoCodeDiscount,
             promocode: appliedPromoCode || null,
             message: "Cart fetched successfully."
-        });
+        }));
     } catch (error) {
         console.error("Error fetching cart:", error);
-        return res.status(500).json({ status: false, message: "Error fetching cart items." });
+        return res.status(500).json(encrypt({ status: false, message: "Error fetching cart items." }));
     }
 };
 
@@ -137,14 +137,14 @@ const addOrUpdateCart = async (req, res) => {
     try {
         const ip = req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
         const { error, value } = addOrUpdateCartSchema.validate(req.body, { abortEarly: false });
-        if (error) return res.status(400).json({ status: false, message: "Validation Error", errors: error.details.map(err => err.message) });
+        if (error) return res.status(400).json(encrypt({ status: false, message: "Validation Error", errors: error.details.map(err => err.message) }));
         const geo = geoip.lookup(ip);
         const { user_id = null, name, email, country, state, city, phone, address, zip_code, cartItems = [] } = value;
         const cartData = { name, email, country, state, city, phone, address, zip_code, user_id, ip, ip_detail: geo ? JSON.stringify(geo) : null };
 
         if (user_id) {
             let userDetail = await UserModel.findOne({ where: { id: user_id } });
-            if (!userDetail) return res.status(404).json({ status: false, message: "User not found." });
+            if (!userDetail) return res.status(404).json(encrypt({ status: false, message: "User not found." }));
         }
 
         // Fetch or create cart
@@ -165,7 +165,7 @@ const addOrUpdateCart = async (req, res) => {
 
             const packSize = await PackSizeProductModel.findOne({ where: { product_id, id: packsize_id } });
             if (!packSize) {
-                return res.status(404).json({ status: false, message: `Product/Packsize not found for product_id: ${product_id}, packsize_id: ${packsize_id}` });
+                return res.status(404).json(encrypt({ status: false, message: `Product/Packsize not found for product_id: ${product_id}, packsize_id: ${packsize_id}` }));
             }
 
             const cartItem = await CartItemModel.findOne({ where: { cart_id, product_id, packsize_id } });
@@ -178,11 +178,11 @@ const addOrUpdateCart = async (req, res) => {
             }
         }
         await transaction.commit();
-        return res.json({ status: true, message: "Cart updated successfully." });
+        return res.json(encrypt({ status: true, message: "Cart updated successfully." }));
     } catch (error) {
         await transaction.rollback();
         console.error("Error adding cart:", error);
-        return res.status(500).json({ status: false, message: "Error updating cart." });
+        return res.status(500).json(encrypt({ status: false, message: "Error updating cart." }));
     }
 };
 
@@ -192,26 +192,26 @@ const removeFromCart = async (req, res) => {
         const ip = req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
         const { error, value } = removeToCartSchema.validate(req.body, { abortEarly: false });
         if (error) {
-            return res.status(400).json({
+            return res.status(400).json(encrypt({
                 status: false,
                 message: "Validation Error",
                 errors: error.details.map(err => err.message),
-            });
+            }));
         }
         const { user_id = null, product_id, packsize_id } = value;
         if (user_id) {
             let userDetail = await UserModel.findOne({ where: { id: user_id } });
-            if (!userDetail) return res.status(404).json({ status: false, message: "User not found." });
+            if (!userDetail) return res.status(404).json(encrypt({ status: false, message: "User not found." }));
         }
         let cartDetail = await CartModel.findOne({ where: { [Op.or]: [user_id ? { user_id } : {}, ip ? { ip } : {}] }, });
-        if (!cartDetail) return res.status(404).json({ status: false, message: "Cart not found." });
+        if (!cartDetail) return res.status(404).json(encrypt({ status: false, message: "Cart not found." }));
         const { id: cart_id } = cartDetail;
         const cartItem = await CartItemModel.findOne({ where: { cart_id, product_id, packsize_id } });
-        if (!cartItem) return res.status(404).json({ status: false, message: "Cart item not found." });
+        if (!cartItem) return res.status(404).json(encrypt({ status: false, message: "Cart item not found." }));
         transaction = await sequelize.transaction();
         await cartItem.destroy({ transaction });
         await transaction.commit();
-        return res.json({ status: true, message: "Cart item removed successfully." });
+        return res.json(encrypt({ status: true, message: "Cart item removed successfully." }));
     } catch (error) {
         if (transaction) {
             try {
@@ -221,7 +221,7 @@ const removeFromCart = async (req, res) => {
             }
         }
         console.error("Error removing cart item:", error);
-        return res.status(500).json({ status: false, message: "Error removing cart item." });
+        return res.status(500).json(encrypt({ status: false, message: "Error removing cart item." }));
     } finally {
         if (transaction) { transaction = null; }
     }
@@ -234,19 +234,19 @@ const clearCart = async (req, res) => {
         const ip = req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
         if (user_id) {
             let userDetail = await UserModel.findOne({ where: { id: user_id } });
-            if (!userDetail) return res.status(404).json({ status: false, message: "User not found." });
+            if (!userDetail) return res.status(404).json(encrypt({ status: false, message: "User not found." }));
         }
         let cartDetail = await CartModel.findOne({ where: { [Op.or]: [user_id ? { user_id } : {}, ip ? { ip } : {}] }, });
-        if (!cartDetail) return res.status(404).json({ status: false, message: "Cart not found." });
+        if (!cartDetail) return res.status(404).json(encrypt({ status: false, message: "Cart not found." }));
         const { id: cart_id } = cartDetail;
         await CartItemModel.destroy({ where: { cart_id } });
         await cartDetail.destroy({ transaction });
         await transaction.commit();
-        return res.json({ status: true, message: "Cart cleared successfully." });
+        return res.json(encrypt({ status: true, message: "Cart cleared successfully." }));
     } catch (error) {
         await transaction.rollback();
         console.error("Error clearing cart:", error);
-        return res.status(500).json({ status: false, message: "Error clearing cart." });
+        return res.status(500).json(encrypt({ status: false, message: "Error clearing cart." }));
     }
 };
 
@@ -256,7 +256,7 @@ const applyPromoCode = async (req, res) => {
         const ip = req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
         if (user_id) {
             let userDetail = await UserModel.findOne({ where: { id: user_id } });
-            if (!userDetail) return res.status(404).json({ status: false, message: "User not found." });
+            if (!userDetail) return res.status(404).json(encrypt({ status: false, message: "User not found." }));
         }
         const currentDate = new Date();
         const promoCode = await PromoCodeModel.findOne({
@@ -267,16 +267,16 @@ const applyPromoCode = async (req, res) => {
             },
             attributes: ["id", "code", "discount", "type"]
         });
-        if (!promoCode) return res.status(400).json({ status: false, message: "Invalid or expired promo code." });
+        if (!promoCode) return res.status(400).json(encrypt({ status: false, message: "Invalid or expired promo code." }));
         const userCartItems = await CartModel.findAll({ where: { [Op.or]: [user_id ? { user_id } : {}, ip ? { ip } : {}] }, attributes: ["subtotal"] });
-        if (!userCartItems || userCartItems.length === 0) return res.status(404).json({ status: false, message: "User cart detail not found." });
+        if (!userCartItems || userCartItems.length === 0) return res.status(404).json(encrypt({ status: false, message: "User cart detail not found." }));
         const totalSubTotal = userCartItems.reduce((acc, item) => acc + parseFloat(item.subtotal || 0), 0);
-        if (promoCode.type === "amount" && totalSubTotal < promoCode.discount) return res.status(400).json({ status: false, message: `Cart subtotal ($${totalSubTotal}) must be greater than the promo code discount ($${promoCode.discount}).` });
+        if (promoCode.type === "amount" && totalSubTotal < promoCode.discount) return res.status(400).json(encrypt({ status: false, message: `Cart subtotal ($${totalSubTotal}) must be greater than the promo code discount ($${promoCode.discount}).` }));
         await CartModel.update({ promocode_id: promoCode.id }, { where: { [Op.or]: [user_id ? { user_id } : {}, ip ? { ip } : {}] }, });
-        res.json({ status: true, message: "Promocode applied successFully.", promoCode });
+        return res.json(encrypt({ status: true, message: "Promocode applied successFully.", promoCode }));
     } catch (error) {
         console.error("Error applyPromoCode:", error);
-        return res.status(500).json({ status: false, message: "Error apply promo-code." });
+        return res.status(500).json(encrypt({ status: false, message: "Error apply promo-code." }));
     }
 };
 
@@ -287,13 +287,13 @@ const removePromoCode = async (req, res) => {
         const whereCondition = { [Op.or]: [user_id ? { user_id } : {}, ip ? { ip } : {}], promocode_id: { [Op.ne]: null } };
 
         let existUserCartDetail = await CartModel.findOne({ where: whereCondition });
-        if (!existUserCartDetail) return res.status(404).json({ status: false, message: "No applied promo code found for you." });
+        if (!existUserCartDetail) return res.status(404).json(encrypt({ status: false, message: "No applied promo code found for you." }));
 
         await CartModel.update({ promocode_id: null }, { where: whereCondition });
-        res.json({ status: true, message: "Promocode removed successFully." });
+        return res.json(encrypt({ status: true, message: "Promocode removed successFully." }));
     } catch (error) {
         console.error("Error removePromoCode:", error);
-        return res.status(500).json({ status: false, message: "Error remove promo-code." });
+        return res.status(500).json(encrypt({ status: false, message: "Error remove promo-code." }));
     }
 };
 

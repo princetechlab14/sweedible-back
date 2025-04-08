@@ -114,7 +114,7 @@ const swaggerDocs = swaggerJsDoc(swaggerOptions);
 app.use('/admin', adminRouter);
 app.use('/api', apiRouter);
 app.use('/', indexRouter);
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+// app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

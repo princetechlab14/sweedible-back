@@ -31,7 +31,7 @@ const getData = async (req, res) => {
             };
         }
 
-        let orderBy = [["id", "DESC"]];
+        let orderBy = [["created_at", "DESC"]];
         if (column && order) orderBy = [[column, order.toUpperCase()]];
 
         const { count, rows: tableRecords } = await OrderModel.findAndCountAll({

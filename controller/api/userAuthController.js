@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const db = require("../../models");
 const { hashPassword, comparePassword, generateJWTToken } = require("../../services/passwordUtils");
 const Joi = require("joi");
+const { encrypt } = require("../../services/encryptResponse");
 const User = db.UserModel;
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
@@ -23,24 +24,24 @@ exports.auth = async (req, res) => {
         if (user) {
             // If user exists, verify password and log in
             const isMatch = await comparePassword(password, user.password);
-            if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
+            if (!isMatch) return res.status(400).json(encrypt({ message: "Invalid credentials" }));
 
             const token = await generateJWTToken({ id: user.id, email: user.email, role: user.role });
-            return res.json({ message: "Login successful", token, user });
+            return res.json(encrypt({ message: "Login successful", token, user }));
         } else {
             // If user does not exist, register them
             const hashedPassword = await hashPassword(password);
             const newUser = await User.create({ name, email, password: hashedPassword });
 
             const token = await generateJWTToken({ id: newUser.id, email: newUser.email, role: newUser.role });
-            return res.status(201).json({ 
-                message: "User registered and logged in successfully!", 
-                user: { id: newUser.id, name: newUser.name, email: newUser.email, role: newUser.role }, 
-                token 
-            });
+            return res.status(201).json(encrypt({
+                message: "User registered and logged in successfully!",
+                user: { id: newUser.id, name: newUser.name, email: newUser.email, role: newUser.role },
+                token
+            }));
         }
     } catch (error) {
-        res.status(500).json({ message: "Server error", error: error.message });
+        return res.status(500).json(encrypt({ message: "Server error", error: error.message }));
     }
 };
 
@@ -48,10 +49,10 @@ exports.auth = async (req, res) => {
 exports.getProfile = async (req, res) => {
     try {
         const user = await User.findByPk(req.user?.id, { attributes: { exclude: ["password"] } });
-        if (!user) return res.status(404).json({ message: "User not found" });
-        res.json(user);
+        if (!user) return res.status(404).json(encrypt({ message: "User not found" }));
+        return res.json(encrypt(user));
     } catch (error) {
-        res.status(500).json({ message: "Server error", error: error.message });
+        return res.status(500).json(encrypt({ message: "Server error", error: error.message }));
     }
 };
 
@@ -61,16 +62,15 @@ exports.updateProfile = async (req, res) => {
         const userId = req.user.id;
 
         const user = await User.findByPk(userId);
-        if (!user) return res.status(404).json({ message: "User not found" });
+        if (!user) return res.status(404).json(encrypt({ message: "User not found" }));
 
         user.name = name || user.name;
         user.phone = phone || user.phone;
         user.country = country || user.country;
 
         await user.save();
-
-        res.json({ message: "Profile updated successfully", user });
+        return res.json(encrypt({ message: "Profile updated successfully", user }));
     } catch (error) {
-        res.status(500).json({ message: "Server error", error: error.message });
+        return res.status(500).json(encrypt({ message: "Server error", error: error.message }));
     }
 };

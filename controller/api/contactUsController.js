@@ -1,4 +1,5 @@
 const { ContactUsModel } = require("../../models");
+const { encrypt } = require("../../services/encryptResponse");
 
 const AddContactUs = async (req, res) => {
     const { first_name, last_name, email, phone, message } = req.body;
@@ -7,13 +8,13 @@ const AddContactUs = async (req, res) => {
     try {
         const data = await ContactUsModel.create(obj);
         if (data) {
-            return res.status(201).json({ success: true, message: "Contact form submitted successfully!" });
+            return res.status(201).json(encrypt({ success: true, message: "Contact form submitted successfully!" }));
         } else {
-            return res.status(500).json({ success: false, message: "Server error, please try again." });
+            return res.status(500).json(encrypt({ success: false, message: "Server error, please try again." }));
         }
     } catch (error) {
         console.error("Error submitting contact form:", error);
-        return res.status(500).json({ success: false, message: "Something went wrong!" });
+        return res.status(500).json(encrypt({ success: false, message: "Something went wrong!" }));
     }
 };
 

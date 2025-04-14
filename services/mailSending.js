@@ -9,7 +9,7 @@ const template = Handlebars.compile(emailTemplateSource);
 
 const MAIL_HOST = process.env.MAIL_HOST || 'smtp.hostinger.com';
 const MAIL_PORT = process.env.MAIL_PORT || 465;
-const MAIL_USERNAME = process.env.MAIL_USERNAME || 'order@medicoease.com';
+const MAIL_USERNAME = process.env.MAIL_USERNAME || 'order@sweedible.com';
 const MAIL_PASSWORD = process.env.MAIL_PASSWORD || 'Tg>e!Ckt3';
 const MAIL_SERVICE = process.env.MAIL_SERVICE || 'smtp';
 
@@ -41,7 +41,7 @@ const sendEmails = async (orderDetails) => {
         }
         const emailHTML = template(orderDetails);
         let mailOptions = {
-            from: `"Medicoease" <${MAIL_USERNAME}>`,
+            from: `"Sweedible" <${MAIL_USERNAME}>`,
             to: orderDetails.email,
             cc: emailList,
             subject: "Payment Processing Update for Your Order",

@@ -128,7 +128,7 @@ exports.createOrder = async (req, res) => {
                 promoCodeDiscount = promoCodeDetail.discount;
             }
         }
-        let shipping_charge = (calculatedTotal > 300 ? 0.00 : 25.00);
+        let shipping_charge = (calculatedTotal > 199 ? 0.00 : 25.00);
         let grandTotal = calculatedTotal - promoCodeDiscount + shipping_charge;
 
         // Create the order

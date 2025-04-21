@@ -35,7 +35,7 @@ const getData = async (req, res) => {
         if (column && order) orderBy = [[column, order.toUpperCase()]];
 
         const { count, rows: tableRecords } = await OrderModel.findAndCountAll({
-            attributes: ['id', 'user_id', 'address', 'total_amount', 'status', 'payment_status', 'created_at'],
+            attributes: ['id', 'user_id', 'name', 'address', 'total_amount', 'status', 'payment_status', 'created_at'],
             where: whereCondition,
             include: [
                 {

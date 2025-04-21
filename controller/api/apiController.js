@@ -377,7 +377,7 @@ const home = async (req, res) => {
                     order: [["shorting", "ASC"]]
                 }
             ],
-            order: [["created_at", "DESC"]],
+            order: [["shorting", "ASC"], ["created_at", "DESC"]],
             subQuery: false,
         });
 

@@ -64,6 +64,10 @@
                                             </th>
                                             <th
                                                 class="px-4 py-3 text-left text-xs font-medium text-gray-100 uppercase tracking-wider">
+                                                Name
+                                            </th>
+                                            <th
+                                                class="px-4 py-3 text-left text-xs font-medium text-gray-100 uppercase tracking-wider">
                                                 Email
                                             </th>
                                             <th
@@ -116,7 +120,7 @@
 
                             let order = settings.aaSorting[0] ? settings.aaSorting[0][1] : "desc";
                             let columnIndex = settings.aaSorting[0] ? settings.aaSorting[0][0] : 0;
-                            let columns = [null, "id", null, "total_amount", "shipping_address", "payment_status", "status", "created_at"];
+                            let columns = [null, "id", null, "total_amount", "address", "payment_status", "status", "created_at"];
                             let column = columns[columnIndex] || "id";
                             $.ajax({
                                 url: "/admin/orders/list",
@@ -144,6 +148,7 @@
                                 orderable: false
                             },
                             { data: "id" },
+                            { data: "name" },
                             {
                                 data: "users",
                                 render: function (data, type, row) {
@@ -153,7 +158,7 @@
                                 searchable: false
                             },
                             { data: "total_amount" },
-                            { data: "shipping_address" },
+                            { data: "address" },
                             { data: "payment_status" },
                             {
                                 data: "status",

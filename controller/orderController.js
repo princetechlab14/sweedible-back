@@ -102,6 +102,25 @@ const deleteRecord = async (req, res) => {
 const orderItems = async (req, res) => {
     const { id } = req.params;
     try {
+        const order = await OrderModel.findByPk(id, {
+            attributes: ['id', 'name', 'email', 'phone', 'address', 'city', 'state', 
+                        'country', 'zip_code', 's_name', 's_address', 's_city', 
+                        's_state', 's_country', 's_zip_code', 'diffrent_address',
+                        'total_amount', 'status', 'payment_status', 'created_at'],
+            include: [
+                {
+                    model: UserModel,
+                    as: "users",
+                    attributes: ["email"],
+                    required: false,
+                }
+            ]
+        });
+
+        if (!order) {
+            return res.status(404).send("Order not found");
+        }
+
         const orderItems = await OrderItemsModel.findAll({
             where: { order_id: id },
             include: [
@@ -120,9 +139,9 @@ const orderItems = async (req, res) => {
         if (!orderItems || orderItems.length === 0) {
             return res.status(404).send("Order items not found");
         }
-        res.render("orders/items", { title: "Order Items List", orderItems, error: "" });
+        res.render("orders/items", { title: "Order Items List", order, orderItems, error: "" });
     } catch (error) {
-        console.error("Error fetching orderItems:", error);
+        console.error("Error fetching order details:", error);
         res.status(500).send("Internal Server Error");
     }
 };

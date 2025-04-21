@@ -178,7 +178,7 @@ exports.getOrders = async (req, res) => {
                 { model: PromoCodeModel, as: "orderPromoCode", required: false, attributes: ["code", "discount", "type"] }
             ],
             where: { [Op.or]: [user_id ? { user_id } : {}, ip ? { ip } : {}] },
-            order: [['created_at', 'DESC']]
+            order: [["created_at", "desc"]]
         });
         return res.json(encrypt({ status: true, data: orders, message: "Get all orders successFully." }));
     } catch (error) {

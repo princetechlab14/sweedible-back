@@ -23,6 +23,7 @@ const allowedOrigins = [
   'https://medicine_back.millionairclubs.in',
   'http://localhost:7007',
   'http://localhost:7006',
+  'http://localhost:7008',
   'http://localhost:3000',
   'https://medicine-web2.vercel.app',
   'https://sweedible.com',

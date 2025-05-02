@@ -49,7 +49,7 @@ const getCart = async (req, res) => {
                         {
                             model: ProductModel,
                             as: "product",
-                            attributes: ["id", "type", "title", "images", "alt_text", "slug", "offer_plan_id"],
+                            attributes: ["id", "type", "title", "images", "slug", "offer_plan_id"],
                             include: [
                                 {
                                     model: OfferPlansModel,

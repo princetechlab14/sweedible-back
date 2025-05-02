@@ -62,7 +62,7 @@ const show = async (req, res) => {
                     model: CartItemModel, as: "cartItems", required: false,
                     include: [
                         {
-                            model: ProductModel, as: "product", attributes: ["id", "type", "title", "images", "alt_text", "slug", "offer_plan_id"],
+                            model: ProductModel, as: "product", attributes: ["id", "type", "title", "images",  "slug", "offer_plan_id"],
                             include: [{ model: OfferPlansModel, as: "offerplan", attributes: ["id", "discount", "type"] }]
                         },
                         { model: PackSizeProductModel, as: "packsize", attributes: ["id", "size", "price"] }

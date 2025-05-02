@@ -150,7 +150,7 @@ const productAll = async (req, res) => {
 
         const products = await ProductModel.findAll({
             attributes: [
-                "id", "title", "slug", "type", "images", "alt_text", "availability", "short_desc", "most_selling", "exclusive", "featured", "created_at",
+                "id", "title", "slug", "type", "images", "availability", "short_desc", "most_selling", "exclusive", "featured", "created_at",
                 [Sequelize.literal(`(SELECT COALESCE(AVG(rating), 0) FROM product_reviews WHERE product_reviews.product_id = products.id)`), "averageRating"],
                 [Sequelize.literal(`(SELECT COALESCE(MIN(price), 0) FROM packsizes_products WHERE packsizes_products.product_id = products.id)`), "first_packsize_price"],
                 [Sequelize.literal(`(SELECT COALESCE(MAX(price), 0) FROM packsizes_products WHERE packsizes_products.product_id = products.id)`), "last_packsize_price"]
@@ -185,7 +185,7 @@ const productSingle = async (req, res) => {
     try {
         const { slug: identifier } = req.params;
         const products = await ProductModel.findOne({
-            attributes: ["id", "title", "slug", "type", "images", "alt_text", "availability", "short_desc", "description", "most_selling", "exclusive", "featured"],
+            attributes: ["id", "title", "slug", "type", "images", "availability", "short_desc", "description", "most_selling", "exclusive", "featured"],
             where: { [Op.or]: [{ id: isNaN(identifier) ? null : identifier }, { slug: identifier }], status: "Active" },
             include: [
                 {
@@ -231,7 +231,7 @@ const searchProducts = async (req, res) => {
         }
 
         const products = await ProductModel.findAll({
-            attributes: ["id", "title", "slug", "images", "alt_text", "availability", "short_desc", "most_selling", "exclusive", "featured",
+            attributes: ["id", "title", "slug", "images","availability", "short_desc", "most_selling", "exclusive", "featured",
                 [Sequelize.literal(`(
                     SELECT COALESCE(AVG(rating), 0) 
                     FROM product_reviews 
@@ -301,7 +301,7 @@ const home = async (req, res) => {
 
         const products = await ProductModel.findAll({
             attributes: [
-                "id", "title", "slug", "type", "images", "alt_text", "availability", "short_desc", "created_at", "most_selling", "exclusive", "featured",
+                "id", "title", "slug", "type", "images", "availability", "short_desc", "created_at", "most_selling", "exclusive", "featured",
                 [Sequelize.literal(`(
                     SELECT COALESCE(AVG(rating), 0) 
                     FROM product_reviews 
@@ -342,7 +342,7 @@ const home = async (req, res) => {
 
         const mostSellingProducts = await ProductModel.findAll({
             attributes: [
-                "id", "title", "slug", "type", "images", "alt_text", "availability", "short_desc", "created_at", "most_selling", "exclusive", "featured",
+                "id", "title", "slug", "type", "images", "availability", "short_desc", "created_at", "most_selling", "exclusive", "featured",
                 [Sequelize.literal(`(
                     SELECT COALESCE(AVG(rating), 0) 
                     FROM product_reviews 
@@ -390,7 +390,7 @@ const home = async (req, res) => {
 
         const exclusiveProducts = await ProductModel.findAll({
             attributes: [
-                "id", "title", "slug", "type", "images", "alt_text", "availability", "short_desc", "created_at", "most_selling", "exclusive", "featured",
+                "id", "title", "slug", "type", "images", "availability", "short_desc", "created_at", "most_selling", "exclusive", "featured",
                 [Sequelize.literal(`(
                     SELECT COALESCE(AVG(rating), 0) 
                     FROM product_reviews 
@@ -431,7 +431,7 @@ const home = async (req, res) => {
 
         const featuredProducts = await ProductModel.findAll({
             attributes: [
-                "id", "title", "slug", "type", "images", "alt_text", "availability", "short_desc", "created_at", "most_selling", "exclusive", "featured",
+                "id", "title", "slug", "type", "images", "availability", "short_desc", "created_at", "most_selling", "exclusive", "featured",
                 [Sequelize.literal(`(
                     SELECT COALESCE(AVG(rating), 0) 
                     FROM product_reviews 

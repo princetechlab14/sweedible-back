@@ -171,7 +171,7 @@ exports.getOrders = async (req, res) => {
                     required: false,
                     attributes: ["id", "order_id", "product_id", "packsize_id", "quantity", "price"],
                     include: [
-                        { model: ProductModel, as: "productDetail", required: false, attributes: ["id", "offer_plan_id", "title", "type", "slug", "images", "availability", "most_selling"] },
+                        { model: ProductModel, as: "productDetail", required: false, attributes: ["id", "offer_plan_id", "title", "type", "slug", "images", "alt_text", "availability", "most_selling"] },
                         { model: PackSizeProductModel, as: "packSizeDetail", required: false }
                     ]
                 },
@@ -202,7 +202,7 @@ exports.getOrderById = async (req, res) => {
                     required: false,
                     attributes: ["id", "order_id", "product_id", "packsize_id", "quantity", "price"],
                     include: [
-                        { model: ProductModel, as: "productDetail", required: false, attributes: ["id", "offer_plan_id", "title", "type", "slug", "images", "availability", "most_selling"] },
+                        { model: ProductModel, as: "productDetail", required: false, attributes: ["id", "offer_plan_id", "title", "type", "slug", "images", "alt_text", "availability", "most_selling"] },
                         { model: PackSizeProductModel, as: "packSizeDetail", required: false }
                     ]
                 },

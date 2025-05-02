@@ -52,6 +52,10 @@ module.exports = (sequelize, Sequelize, DataTypes) => {
                 type: DataTypes.BOOLEAN,
                 defaultValue: false,
             },
+            alt_text: {
+                type: DataTypes.STRING(250),
+                allowNull: true,
+            },
             shorting: {
                 type: DataTypes.INTEGER,
                 defaultValue: 500,

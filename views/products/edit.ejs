@@ -95,9 +95,17 @@
                                     multiple accept="image/*" />
                                 <div class="grid grid-cols-6 gap-4 my-2">
                                     <% products?.images?.forEach((image, index)=> { %>
-                                        <img src="<%= image %>" alt="image" class="mx-2">
+                                        <img src="<%= image %>" alt="<%= products?.alt_text %>" class="mx-2">
                                         <% }); %>
                                 </div>
+                            </div>
+
+                            <!-- alt_text field -->
+                            <div class="mb-4">
+                                <label for="alt_text" class="block text-sm font-medium text-gray-700">Alt Text:</label>
+                                <input id="alt_text" name="alt_text" type="text"
+                                    class="mt-1 block border p-1 w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                                    value="<%= products?.alt_text %>" />
                             </div>
 
                             <!-- Short Description field -->

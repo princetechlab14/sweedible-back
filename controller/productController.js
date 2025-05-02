@@ -6,6 +6,7 @@ const Joi = require("joi");
 const productSchema = Joi.object({
     title: Joi.string().required(),
     type: Joi.string().allow(null).empty('').optional(),
+    alt_text: Joi.string().allow(null).empty('').optional(),
     short_desc: Joi.string().allow(null).empty('').optional(),
     description: Joi.string().allow(null).empty('').optional(),
     shorting: Joi.number().integer().default(500).optional(),
@@ -52,7 +53,8 @@ const store = async (req, res) => {
             return res.render("products/create", { title: "Products Create", error: error.details[0].message, subCategories, products: value });
         }
         const { title, sub_category_id, size, price } = value;
-        const slug = title.trim().toLowerCase().replace(/\s+/g, "-").replace(/\./g, "-").replace(/[^\w-]+/g, "");        const storeData = { ...value, slug, images: imagePaths };
+        const slug = title.trim().toLowerCase().replace(/\s+/g, "-").replace(/\./g, "-").replace(/[^\w-]+/g, "");
+        const storeData = { ...value, slug, images: imagePaths };
         const newProduct = await ProductModel.create(storeData, { transaction });
         const productId = newProduct.id;
         if (size && price && size.length === price.length) {
@@ -137,11 +139,11 @@ const update = async (req, res) => {
             where: { product_id: productId },
             attributes: ["id", "size", "price"]
         });
-        const existingPackSizeIds = existingPackSizes.map(ps => ps.id);
-        const orderDependency = await OrderItemsModel.findAll({
-            where: { packsize_id: existingPackSizeIds }
-        });
-        const usedPackSizeIds = orderDependency.map(order => order.packsize_id);
+        // const existingPackSizeIds = existingPackSizes.map(ps => ps.id);
+        // const orderDependency = await OrderItemsModel.findAll({
+        //     where: { packsize_id: existingPackSizeIds }
+        // });
+        // const usedPackSizeIds = orderDependency.map(order => order.packsize_id);
         const newPackSizes = value.size?.map((size, index) => ({
             product_id: productId,
             size,
@@ -149,17 +151,17 @@ const update = async (req, res) => {
         })) || [];
 
         for (let packSize of existingPackSizes) {
-            const isUsed = usedPackSizeIds.includes(packSize.id);
-            const matchingNew = newPackSizes.find(ps => ps.size == packSize.size);
-            if (matchingNew) {
-                await PackSizeProductModel.update(
-                    { price: matchingNew.price },
-                    { where: { id: packSize.id }, transaction }
-                );
-                newPackSizes.splice(newPackSizes.indexOf(matchingNew), 1);
-            } else if (!isUsed) {
-                await PackSizeProductModel.destroy({ where: { id: packSize.id }, transaction });
-            }
+            // const isUsed = usedPackSizeIds.includes(packSize.id);
+            // const matchingNew = newPackSizes.find(ps => ps.size == packSize.size);
+            // if (matchingNew) {
+            //     await PackSizeProductModel.update(
+            //         { price: matchingNew.price },
+            //         { where: { id: packSize.id }, transaction }
+            //     );
+            //     newPackSizes.splice(newPackSizes.indexOf(matchingNew), 1);
+            // } else if (!isUsed) {
+            await PackSizeProductModel.destroy({ where: { id: packSize.id }, transaction });
+            // }
         }
         if (newPackSizes.length > 0) {
             await PackSizeProductModel.bulkCreate(newPackSizes, { transaction });
@@ -276,13 +278,14 @@ const getData = async (req, res) => {
                     { slug: { [Op.like]: `%${search}%` } },
                     { availability: { [Op.like]: `%${search}%` } },
                     { status: { [Op.like]: `%${search}%` } },
+                    { alt_text: { [Op.like]: `%${search}%` } },
                 ],
             };
         }
         let orderBy = [["id", "DESC"]];
         if (column && order) orderBy = [[column, order.toUpperCase()]];
         const { count, rows: tableRecords } = await ProductModel.findAndCountAll({
-            attributes: ['id', 'offer_plan_id', 'title', 'type', 'slug', 'images', 'short_desc', 'description', 'availability', 'most_selling', 'shorting', 'status', 'exclusive', 'featured'],
+            attributes: ['id', 'offer_plan_id', 'title', 'type', 'slug', 'images', 'alt_text', 'short_desc', 'description', 'availability', 'most_selling', 'shorting', 'status', 'exclusive', 'featured'],
             where: whereCondition,
             limit,
             offset,

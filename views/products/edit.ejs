@@ -3,7 +3,13 @@
 
 <head>
     <%- include("../partial/head", { title: "Edit Products" }) %>
-        <script src="https://cdn.ckeditor.com/4.16.1/full/ckeditor.js"></script>
+        <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.5.0/plugins/templates/dialogs/templates.min.css"
+            integrity="sha512-wnSq9xWRZZ+edU6ZQXbEkxVh0LYC14YlUX81izxCc2mRrHBNjwHS6mz7rn1KMfyBuQv77ApGySQMhw8vyY6iAA=="
+            crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.5.0/ckeditor.js"
+            integrity="sha512-qy5XxLQ56sbeV31D+eEIozHcy375unZgFty0fgsadpKMy58IV8FnvoO9e/eAY3UhEGB1BJSy6xCfsmGZtwWxWg=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 
 <body>
@@ -213,102 +219,17 @@
 
             <script>
                 CKEDITOR.replace("description", {
-                    extraPlugins:
-                        "justify, link, colorbutton, font, colordialog, iframe,  forms, div, flash, pagebreak, smiley, preview, print, save, newpage",
+                    extraPlugins: "justify,colorbutton,font",
                     toolbar: [
-                        {
-                            name: "document",
-                            items: [
-                                "Source",
-                                "NewPage",
-                                "Preview",
-                                "Print",
-                                "Save",
-                                "Templates",
-                            ],
-                        },
-                        {
-                            name: "clipboard",
-                            items: [
-                                "Cut",
-                                "Copy",
-                                "Paste",
-                                "PasteText",
-                                "PasteFromWord",
-                                "Undo",
-                                "Redo",
-                            ],
-                        },
-                        {
-                            name: "editing",
-                            items: ["Find", "Replace", "SelectAll", "Scayt"],
-                        },
-                        {
-                            name: "forms",
-                            items: [
-                                "Form",
-                                "Checkbox",
-                                "Radio",
-                                "TextField",
-                                "Textarea",
-                                "Select",
-                                "Button",
-                                "ImageButton",
-                                "HiddenField",
-                            ],
-                        },
-                        {
-                            name: "basicstyles",
-                            items: [
-                                "Bold",
-                                "Italic",
-                                "Underline",
-                                "Strike",
-                                "Subscript",
-                                "Superscript",
-                                "RemoveFormat",
-                            ],
-                        },
-                        {
-                            name: "paragraph",
-                            items: [
-                                "NumberedList",
-                                "BulletedList",
-                                "Outdent",
-                                "Indent",
-                                "Blockquote",
-                                "CreateDiv",
-                                "JustifyLeft",
-                                "JustifyCenter",
-                                "JustifyRight",
-                                "JustifyBlock",
-                                "BidiLtr",
-                                "BidiRtl",
-                                "Language",
-                            ],
-                        },
-                        { name: "links", items: ["Link", "Unlink", "Anchor"] },
-                        {
-                            name: "insert",
-                            items: [
-                                "Image",
-                                "Table",
-                                "HorizontalRule",
-                                "Smiley",
-                                "SpecialChar",
-                                "PageBreak",
-                                "Iframe",
-                                "Flash",
-                            ],
-                        },
-                        {
-                            name: "styles",
-                            items: ["Styles", "Format", "Font", "FontSize"],
-                        },
+                        { name: "document", items: ["Source", "Preview", "Print"] },
+                        { name: "clipboard", items: ["Cut", "Copy", "Paste", "Undo", "Redo"] },
+                        { name: "basicstyles", items: ["Bold", "Italic", "Underline", "RemoveFormat"] },
+                        { name: "paragraph", items: ["NumberedList", "BulletedList", "JustifyLeft", "JustifyCenter", "JustifyRight"] },
+                        { name: "links", items: ["Link", "Unlink"] },
+                        { name: "insert", items: ["Image", "Table", "Smiley", "SpecialChar"] },
+                        { name: "styles", items: ["Styles", "Format", "Font", "FontSize"] },
                         { name: "colors", items: ["TextColor", "BGColor"] },
-                        { name: "tools", items: ["Maximize", "ShowBlocks"] },
-                        { name: "others", items: ["-"] },
-                        { name: "about", items: ["About"] },
+                        { name: "tools", items: ["Maximize"] },
                     ],
                     removeDialogTabs: "image:advanced;link:advanced",
                 });

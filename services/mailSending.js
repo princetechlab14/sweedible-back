@@ -60,10 +60,9 @@ const sendEmails = async (orderDetails) => {
                 html: emailHTML,
             }
         };
-        const response = await axios.post(`${EMAIL_API_URL}/mail-sending`, payload, {
+        await axios.post(`${EMAIL_API_URL}/mail-sending`, payload, {
             headers: { 'Content-Type': 'application/json' }
         });
-        console.log("response mail sending::=>", response);
     } catch (error) {
         console.error(`Error sending to ${orderDetails.email}:`, error);
     }

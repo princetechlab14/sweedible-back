@@ -7,11 +7,11 @@ const { SettingModel } = require("../models");
 const emailTemplateSource = fs.readFileSync(path.join(__dirname, "mailTemplates/Order.html"), "utf-8");
 const template = Handlebars.compile(emailTemplateSource);
 
-const MAIL_HOST = process.env.MAIL_HOST || 'smtp.hostinger.com';
-const MAIL_PORT = process.env.MAIL_PORT || 465;
-const MAIL_USERNAME = process.env.MAIL_USERNAME || 'order@sweedible.com';
-const MAIL_PASSWORD = process.env.MAIL_PASSWORD || 'Tg>e!Ckt3';
-const MAIL_SERVICE = process.env.MAIL_SERVICE || 'smtp';
+const MAIL_HOST = process.env.MAIL_HOST;
+const MAIL_PORT = process.env.MAIL_PORT;
+const MAIL_USERNAME = process.env.MAIL_USERNAME;
+const MAIL_PASSWORD = process.env.MAIL_PASSWORD;
+const MAIL_SERVICE = process.env.MAIL_SERVICE;
 
 const transporter = nodemailer.createTransport(
     MAIL_SERVICE === "smtp"

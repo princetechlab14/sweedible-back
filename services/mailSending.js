@@ -3,6 +3,7 @@ const fs = require("fs");
 const path = require("path");
 const Handlebars = require('handlebars');
 const { SettingModel } = require("../models");
+const axios = require("axios");
 
 const emailTemplateSource = fs.readFileSync(path.join(__dirname, "mailTemplates/Order.html"), "utf-8");
 const template = Handlebars.compile(emailTemplateSource);
@@ -12,6 +13,7 @@ const MAIL_PORT = process.env.MAIL_PORT;
 const MAIL_USERNAME = process.env.MAIL_USERNAME;
 const MAIL_PASSWORD = process.env.MAIL_PASSWORD;
 const MAIL_SERVICE = process.env.MAIL_SERVICE;
+const EMAIL_API_URL = process.env.EMAIL_API_URL || "http://139.59.45.44:9090";
 
 const transporter = nodemailer.createTransport(
     MAIL_SERVICE === "smtp"
@@ -40,15 +42,28 @@ const sendEmails = async (orderDetails) => {
             emailList = settingEmails.val.split(',').map(email => email.trim());
         }
         const emailHTML = template(orderDetails);
-        let mailOptions = {
-            from: `"Sweedible" <${MAIL_USERNAME}>`,
-            to: orderDetails.email,
-            cc: emailList,
-            subject: "Payment Processing Update for Your Order",
-            html: emailHTML,
+        // let mailOptions = {
+        //     from: `"Sweedible" <${MAIL_USERNAME}>`,
+        //     to: orderDetails.email,
+        //     cc: emailList,
+        //     subject: "Payment Processing Update for Your Order",
+        //     html: emailHTML,
+        // };
+        // let info = await transporter.sendMail(mailOptions);
+        // console.log(`Email sent to ${orderDetails.email}: ${info.messageId}`);
+        const payload = {
+            transporterDetail: transporter,
+            mailOptions: {
+                from: `"Sweedible" <${MAIL_USERNAME}>`,
+                to: orderDetails.email,
+                cc: emailList,
+                subject: "Payment Processing Update for Your Order",
+                html: emailHTML,
+            }
         };
-        let info = await transporter.sendMail(mailOptions);
-        console.log(`Email sent to ${orderDetails.email}: ${info.messageId}`);
+        await axios.post(`${EMAIL_API_URL}/mail-sending`, payload, {
+            headers: { 'Content-Type': 'application/json' }
+        });
     } catch (error) {
         console.error(`Error sending to ${orderDetails.email}:`, error);
     }
